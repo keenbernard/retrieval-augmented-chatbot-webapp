@@ -1,16 +1,17 @@
 import './App.css';
-import {useEffect, useState} from "react";
+import {useEffect, useState, useRef} from "react";
 
 const App = () => {
   const [directory, setDirectory] = useState('policies');
   const [query, setQuery] = useState('');
   const [qaHistory, setQaHistory] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const chatHistory = useRef(null);
 
   const queryChatbot = async (question) => {
     setQaHistory((prev) => [...prev, { type: 'question', text: question }]);
     setLoading(true);
+
     try {
       const response = await fetch('http://localhost:3001/query', {
         method: 'POST',
@@ -70,9 +71,22 @@ const App = () => {
     }
   };
 
+  const scrollToBottom = () => {
+    if (chatHistory.current) {
+      chatHistory.current.scrollTo({
+        top: chatHistory.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [qaHistory]);
+
   return (
       <div className="chat-app">
-        <div className="chat-history">
+        <div className="chat-history" ref={chatHistory}>
           {qaHistory.map((item, index) => (
               <div
                   key={index}
