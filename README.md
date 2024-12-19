@@ -1,11 +1,17 @@
 # React App for RAG Chatbot
 
-This project serves as a React frontend to interact with a Flask API for managing and querying document embeddings. The backend acts as a bridge for sending user requests (like initializing indexes and querying embeddings) to the Flask API endpoints.
+This project serves as a React frontend for interacting with a Flask API that manages and queries document embeddings. The backend acts as a bridge for processing user requests, such as initializing indexes and querying embeddings, via the Flask API endpoints.
 
 ## Features
 
-- Initialize Document Index: Upload PDF chunks and embeddings to Pinecone or other vector databases via the Flask API.
-- Query Index: Send queries to retrieve relevant document embeddings and receive answers from the Flask API.
+- **Chat Interface**:
+    - Users can input queries via a chat-like interface.
+    - Questions appear immediately on the right in a user bubble, and chatbot answers appear on the left in a separate bubble.
+    - Auto-scroll ensures the latest messages are always visible.
+- **Initialize Document Index**:
+    - Upload PDF chunks and embeddings to Pinecone or other vector databases via the Flask API.
+- **Query Index**:
+    - Send natural language queries to retrieve relevant embeddings and receive answers from the Flask API.
 
 ## Prerequisites
 
@@ -13,7 +19,8 @@ Ensure you have the following installed:
 
 - Node.js (v16+ recommended)
 - npm (Node Package Manager)
-- A running Flask backend on http://127.0.0.1:5000 or Docker container on http://localhost:8000
+ - **A Running Flask Backend**:
+    - Ensure the backend is available at `http://127.0.0.1:5000` or via Docker at `http://localhost:8000`.
 
 ## Project Setup
 
@@ -29,6 +36,10 @@ npm install
 ```
 
 ## Usage
+
+### Start the Backend
+Ensure your Flask backend is running.
+
 Run the Server: Start the Node.js backend:
 ```
 cd server
@@ -38,9 +49,10 @@ Run the Client: Start the React.js frontend:
 ```
 npm start
 ```
+
 Endpoints: The Node.js backend exposes the following endpoints:
-- Initialize Index
-```
+#### **Initialize Index**
+```http
 POST /initialize
 Content-Type: application/json
 
@@ -48,8 +60,9 @@ Content-Type: application/json
   "directory": "policies"
 }
 ```
-- Query Index
-```
+
+#### **Query Index**
+```http
 POST /query
 Content-Type: application/json
 
@@ -57,6 +70,10 @@ Content-Type: application/json
   "query": "What is the drug-free workplace policy?"
 }
 ```
+
+## Project Structure
+- **Frontend**: React.js with a focus on dynamic state updates and user experience.
+- **Backend**: Node.js with Express, acting as a bridge between the React frontend and Flask API.
 
 ## Dependencies
 
