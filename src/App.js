@@ -2,15 +2,16 @@ import './App.css';
 import {useEffect, useState} from "react";
 
 const App = () => {
-  const [directory, setDirectory] = useState('policies');
+  const [directory, setDirectory] = useState('products');
   const [query, setQuery] = useState('');
   const [qaHistory, setQaHistory] = useState([]);
   const [loading, setLoading] = useState(false);
 
 
   const queryChatbot = async (question) => {
+    setQaHistory((prev) => [...prev, { type: 'question', text: question }]);
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await fetch('http://localhost:3001/query', {
         method: 'POST',
         headers: {
@@ -22,12 +23,14 @@ const App = () => {
       });
 
       const query_answer = await response.json();
-      setQaHistory((prev) => [...prev, { question: question, answer: query_answer.answer }]);
-      setQuery('')
+      setQaHistory((prev) => [...prev, { type: 'answer', text: query_answer.answer }]);
 
-      console.log(JSON.stringify(query_answer, null, 2));
     } catch (e) {
-      console.log(e);
+      console.error(e);
+      setQaHistory((prev) => [
+        ...prev,
+        { type: 'answer', text: 'Sorry, something went wrong. Please try again.' },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -47,7 +50,6 @@ const App = () => {
         });
 
         const initialize_response = await response.json();
-
         console.log('Initialize Response:', initialize_response.message);
 
       } catch (e) {
@@ -60,37 +62,43 @@ const App = () => {
     });
   }, [directory]);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (query.trim()) {
+      queryChatbot(query);
+      setQuery('');
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <div style={{textAlign: 'left', maxWidth: '1400px'}}>
-          {qaHistory.map((qa, index) => (
-              <div key={index} style={{marginBottom: '15px', color: 'white'}}>
-                <strong style={{color: "darkgray"}}>Q{index + 1}: {qa.question}</strong>
-                <p style={{margin: 1, color: 'whitesmoke', wordWrap: 'break-word', lineHeight: 1.5}}>A: {qa.answer}</p>
+      <div className="chat-app">
+        <div className="chat-history">
+          {qaHistory.map((item, index) => (
+              <div
+                  key={index}
+                  className={`chat-bubble ${
+                      item.type === 'question' ? 'chat-question' : 'chat-answer'
+                  }`}
+              >
+                {item.text}
               </div>
           ))}
+          {loading && <div className="chat-loading">Thinking...</div>}
         </div>
-        <div style={{textAlign: 'left', marginTop: '20px', maxWidth: '1400px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+
+        <form className="chat-input-container" onSubmit={handleSubmit}>
           <input
               type="text"
+              className="chat-input"
+              placeholder="Ask a question..."
               value={query}
-              placeholder="Enter your question here..."
               onChange={(e) => setQuery(e.target.value)}
-              style={{margin: '0 10px', padding: '5px'}}
           />
-          <button
-              style={{margin: '0 10px', padding: '5px'}}
-              className="App-button"
-              onClick={() => {
-                if (query.trim()) queryChatbot(query);
-              }}
-          >
-            {loading ? 'Loading...' : 'Submit Question'}
+          <button type="submit" className="chat-submit" disabled={loading}>
+            {loading ? 'Loading...' : 'Send'}
           </button>
-        </div>
-      </header>
-    </div>
+        </form>
+      </div>
   );
 }
 

@@ -1,5 +1,6 @@
 const axios = require('axios');
 const FLASK_BASE_URL = 'http://127.0.0.1:5000/api/v1';
+const DOCKER_BASE_URL = 'http://localhost:8000/api/v1';
 
 const axiosInstance = axios.create({
     baseURL: FLASK_BASE_URL,
