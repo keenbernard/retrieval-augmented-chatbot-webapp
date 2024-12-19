@@ -1,4 +1,4 @@
-# Node.js Backend for RAG Chatbot
+# React App for RAG Chatbot
 
 This project serves as a React frontend to interact with a Flask API for managing and querying document embeddings. The backend acts as a bridge for sending user requests (like initializing indexes and querying embeddings) to the Flask API endpoints.
 
