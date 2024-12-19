@@ -45,7 +45,7 @@ body {
   color: white;
 }
 
-/* Main chat app container    */
+/* Main chat app container  height: 100vh; */
 .chat-app {
   display: flex;
   flex-direction: column;
