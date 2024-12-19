@@ -2,7 +2,7 @@ import './App.css';
 import {useEffect, useState} from "react";
 
 const App = () => {
-  const [directory, setDirectory] = useState('products');
+  const [directory, setDirectory] = useState('policies');
   const [query, setQuery] = useState('');
   const [qaHistory, setQaHistory] = useState([]);
   const [loading, setLoading] = useState(false);

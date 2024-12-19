@@ -1,6 +1,6 @@
 # Node.js Backend for RAG Chatbot
 
-This project serves as a Node.js backend to interact with a Flask API for managing and querying document embeddings. The backend acts as a bridge for sending user requests (like initializing indexes and querying embeddings) to the Flask API endpoints.
+This project serves as a React frontend to interact with a Flask API for managing and querying document embeddings. The backend acts as a bridge for sending user requests (like initializing indexes and querying embeddings) to the Flask API endpoints.
 
 ## Features
 
@@ -13,7 +13,7 @@ Ensure you have the following installed:
 
 - Node.js (v16+ recommended)
 - npm (Node Package Manager)
-- A running Flask backend on http://127.0.0.1:5000
+- A running Flask backend on http://127.0.0.1:5000 or Docker container on http://localhost:8000
 
 ## Project Setup
 
@@ -31,7 +31,12 @@ npm install
 ## Usage
 Run the Server: Start the Node.js backend:
 ```
-node index.js
+cd server
+npm run dev index.js
+```
+Run the Client: Start the React.js frontend:
+```
+npm start
 ```
 Endpoints: The Node.js backend exposes the following endpoints:
 - Initialize Index
@@ -61,7 +66,7 @@ Content-Type: application/json
 - Dotenv: Manage environment variables.
 
 ## License
-Copyright [2024] [Keenan Bernard]
+Copyright 2024 Keenan Bernard
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
