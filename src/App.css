@@ -48,7 +48,7 @@ body {
 /* Main chat app container  height: 100vh; */
 .chat-app {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: 100vh;
 }
 
@@ -139,4 +139,11 @@ body {
 .chat-submit:disabled {
   background-color: #555;
   cursor: not-allowed;
+}
+
+.chat-section{
+display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
 }

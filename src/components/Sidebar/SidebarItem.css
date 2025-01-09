@@ -1,0 +1,16 @@
+.sidebar-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.sidebar-item:hover {
+    background-color: #333;
+}
+
+.sidebar-item.active {
+    background-color: #555; /* Highlight active chat */
+    color: #fff; /* Change text color for active chat */
+    font-weight: bold; /* Make active chat title bold */
+}
