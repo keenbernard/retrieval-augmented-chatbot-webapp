@@ -1,0 +1,78 @@
+#basic-nav-dropdown > div > img{
+    height: 50px;
+    width: 50px;
+    border-radius: 20px;
+}
+
+html {
+    overflow-y: scroll;
+}
+
+#profile-div > div > nav > div{
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+.navColor {
+    background-color: #ececec;
+}
+
+.navImage {
+    width: 15%;
+}
+
+.dropdown-toggle:after {
+    display: none !important;
+}
+
+.dropdown-item{
+    color: #FFFFFF !important;
+}
+
+.dropdown-item:hover {
+    color: #FFF;
+    background-color: #0000FF !important;
+}
+
+.dropdown-item a:hover {
+    color: white;
+}
+
+.dropdown-item a {
+    text-decoration: none;
+    color: black;
+}
+
+.dropdown-menu a {
+    color: #FFF !important;
+    text-align: center;
+}
+
+.dropdown-menu > a:hover,
+.dropdown-menu > div:hover,
+.myHistory:hover,
+.adminPanel:hover,
+.dropdown-item:hover {
+    background-color: #7F8487 !important;
+}
+
+.dropdown-menu a {
+    text-decoration: none !important;
+}
+
+.dropdown-button-drop-start {
+    text-decoration: none;
+}
+
+
+.mb-2 .title{
+    text-align: center;
+}
+
+
+@media screen and (min-width: 1600px) {
+    .navImage {
+        width: 10%;
+    }
+}

@@ -66,3 +66,94 @@ body {
     font-size: 1.2rem;
     color: #999;
 }
+
+@media only screen and (max-width: 1119px) {
+    .sidebar-header h2 {
+        margin: 0;
+        font-size: 1.1rem;
+    }
+
+    .sidebar-header button {
+        font-size: .7rem;
+    }
+}
+
+@media only screen and (max-width: 998px) {
+    .sidebar-header h2 {
+        margin: 0;
+        font-size: .9rem;
+    }
+
+    .sidebar-header button {
+        font-size: .7rem;
+    }
+}
+
+@media only screen and (max-width: 880px) {
+    .sidebar-header h2 {
+        margin: 0;
+        font-size: .85rem;
+    }
+
+    .sidebar-header button {
+        font-size: .6rem;
+    }
+
+    .sidebar-section h3 {
+        font-size: .9rem;
+    }
+
+    .sidebar-item {
+        font-size: .8rem;
+    }
+}
+
+/* Ipad Air */
+@media only screen and (max-width: 820px) {
+    .sidebar-header h2 {
+        margin: 0;
+        font-size: .8rem;
+    }
+
+    .sidebar-header button {
+        font-size: .6rem;
+        padding: 6px;
+    }
+
+    .sidebar-section h3 {
+        font-size: .8rem;
+    }
+
+    .sidebar-item {
+        font-size: .6rem;
+    }
+}
+
+/* Iphone 14 Pro Max */
+@media only screen and (max-width: 430px) {
+    .sidebar-header {
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .sidebar-header h2 {
+        margin: 4px;
+        font-size: 1rem;
+    }
+
+    .sidebar-header button {
+        font-size: .6rem;
+        padding: 6px;
+    }
+
+    .sidebar-section h3 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+
+    .sidebar-item {
+        font-size: .6rem;
+        padding: 6px;
+    }
+}

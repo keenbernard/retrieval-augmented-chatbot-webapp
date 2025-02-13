@@ -1,10 +1,16 @@
 import './App.css';
-import { useEffect, useState, useRef } from 'react';
+import { AuthenticatedTemplate } from "@azure/msal-react";
+import { useMsalAuthentication } from "@azure/msal-react";
+import {InteractionType} from "@azure/msal-browser";
+import React, { useEffect, useState, useRef } from 'react';
 import Sidebar from './components/Sidebar/Sidebar';
 import {localPort} from "./portConfigurtion";
+import ProfileContent from "./components/Microsoft/ProfileContent";
+import SignOutButton from "./components/Microsoft/SignOutButton";
 
 
 const App = () => {
+  useMsalAuthentication(InteractionType.Redirect);
   const [chats, setChats] = useState([]); // List of all chats
   const [activeChatId, setActiveChatId] = useState(null); // Currently active chat ID
   const [loading, setLoading] = useState(false);
@@ -121,48 +127,54 @@ const App = () => {
   const activeChat = chats.find((chat) => chat.id === activeChatId);
 
   return (
-      <div className="chat-app">
-        <Sidebar
-            chats={chats}
-            activeChatId={activeChatId}
-            onNewChat={() => createNewChat(false)} // Pass `false` for user-created chats
-            onSelectChat={setActiveChatId}
-        />
-        <div className="chat-section">
-          {activeChat ? (
-              <>
-                <div className="chat-history" ref={chatHistory}>
-                  {activeChat.qaHistory.map((item, index) => (
-                      <div
-                          key={index}
-                          className={`chat-bubble ${
-                              item.type === 'question' ? 'chat-question' : 'chat-answer'
-                          }`}
-                      >
-                        {item.text}
-                      </div>
-                  ))}
-                  {loading && <div className="chat-loading">Thinking...</div>}
-                </div>
+      <AuthenticatedTemplate>
+        <div className="chat-app">
+          <ProfileContent />
+          <Sidebar
+              chats={chats}
+              activeChatId={activeChatId}
+              onNewChat={() => createNewChat(false)} // Pass `false` for user-created chats
+              onSelectChat={setActiveChatId}
+          />
+          <div className="chat-section">
+            <div className='SignOut'>
+              <SignOutButton />
+            </div>
+            {activeChat ? (
+                <>
+                  <div className="chat-history" ref={chatHistory}>
+                    {activeChat.qaHistory.map((item, index) => (
+                        <div
+                            key={index}
+                            className={`chat-bubble ${
+                                item.type === 'question' ? 'chat-question' : 'chat-answer'
+                            }`}
+                        >
+                          {item.text}
+                        </div>
+                    ))}
+                    {loading && <div className="chat-loading">Thinking...</div>}
+                  </div>
 
-                <form className="chat-input-container" onSubmit={handleSubmit}>
-                  <input
-                      type="text"
-                      name="query"
-                      className="chat-input"
-                      placeholder="Ask a question..."
-                      disabled={loading}
-                  />
-                  <button type="submit" className="chat-submit" disabled={loading}>
-                    {loading ? 'Loading...' : 'Send'}
-                  </button>
-                </form>
-              </>
-          ) : (
-              <div className="chat-placeholder">No chat selected. Create a new one!</div>
-          )}
+                  <form className="chat-input-container" onSubmit={handleSubmit}>
+                    <input
+                        type="text"
+                        name="query"
+                        className="chat-input"
+                        placeholder="Ask a question..."
+                        disabled={loading}
+                    />
+                    <button type="submit" className="chat-submit" disabled={loading}>
+                      {loading ? 'Loading...' : 'Send'}
+                    </button>
+                  </form>
+                </>
+            ) : (
+                <div className="chat-placeholder">No chat selected. Create a new one!</div>
+            )}
+          </div>
         </div>
-      </div>
+      </AuthenticatedTemplate>
   );
 };
 

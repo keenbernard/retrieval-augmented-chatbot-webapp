@@ -1,0 +1,8 @@
+.ProfilePhoto{
+    height: 90px;
+    width: 90px;
+    margin-top: 10px;
+    borderBottomLeftRadius: 3;
+    borderBottomRightRadius: 3
+
+}

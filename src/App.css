@@ -147,3 +147,10 @@ display: flex;
   height: 100%;
   width: 100%;
 }
+
+.SignOut{
+  display: flex;
+  justify-content: end;
+  align-items: end;
+  margin: 15px 10px;
+}
