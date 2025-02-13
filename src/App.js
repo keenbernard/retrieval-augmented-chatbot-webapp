@@ -1,6 +1,8 @@
 import './App.css';
 import { useEffect, useState, useRef } from 'react';
 import Sidebar from './components/Sidebar/Sidebar';
+import {localPort} from "./portConfigurtion";
+
 
 const App = () => {
   const [chats, setChats] = useState([]); // List of all chats
@@ -21,7 +23,7 @@ const App = () => {
 
     // Initialize the chat
     try {
-      const response = await fetch('http://localhost:3001/initialize', {
+      const response = await fetch(`http://localhost:${localPort}/initialize`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -60,7 +62,7 @@ const App = () => {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/query', {
+      const response = await fetch(`http://localhost:${localPort}/query`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -113,6 +115,7 @@ const App = () => {
     if (chats.length === 0) {
       createNewChat(true); // Pass `true` for the first "Welcome Chat"
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty dependency array ensures this only runs once on load
 
   const activeChat = chats.find((chat) => chat.id === activeChatId);

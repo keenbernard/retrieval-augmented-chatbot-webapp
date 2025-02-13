@@ -6,7 +6,7 @@ const Sidebar = ({ chats, activeChatId, onNewChat, onSelectChat }) => {
     return (
         <div className="sidebar">
             <div className="sidebar-header">
-                <h2>RAGBOT</h2>
+                <h2>MIMIR</h2>
                 <button onClick={onNewChat}>+ New Chat</button>
             </div>
 

@@ -1,6 +1,7 @@
 const axios = require('axios');
 const FLASK_BASE_URL = 'http://127.0.0.1:5000/api/v1';
 const DOCKER_BASE_URL = 'http://localhost:8000/api/v1';
+const TEST_BASE_URL = 'http://52.188.190.216:8000/api/v1';
 
 const axiosInstance = axios.create({
     baseURL: DOCKER_BASE_URL,
@@ -10,7 +11,7 @@ const axiosInstance = axios.create({
 // Function to call the initialize endpoint
 async function initializeIndex(directory) {
     try {
-        const response = await axiosInstance.post(`${DOCKER_BASE_URL}/initialize`, { directory });
+        const response = await axiosInstance.post(`${TEST_BASE_URL}/initialize`, { directory });
         console.log('Initialize Response:', response.data);
         return response.data;
     } catch (error) {
@@ -22,7 +23,7 @@ async function initializeIndex(directory) {
 // Function to query the Flask API
 async function queryRAG(query) {
     try {
-        const response = await axiosInstance.post(`${DOCKER_BASE_URL}/query`, { query });
+        const response = await axiosInstance.post(`${TEST_BASE_URL}/query`, { query });
         console.log('Query Response:', response.data);
         return response.data;
     } catch (error) {

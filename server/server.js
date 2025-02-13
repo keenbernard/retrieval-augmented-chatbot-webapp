@@ -3,12 +3,13 @@ const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { initializeIndex, queryRAG } = require('./routes/api');
+const portConfiguration = require('../src/portConfigurtion');
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || portConfiguration.localPort;
 
 // Middleware
 app.use(cors());
