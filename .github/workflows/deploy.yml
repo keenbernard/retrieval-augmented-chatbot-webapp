@@ -38,7 +38,7 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: [self-hosted, test-frontend]
+    runs-on: [self-hosted, midtest-frontend]
     steps:
       - name: Download result react frontend
         uses: actions/download-artifact@v4
