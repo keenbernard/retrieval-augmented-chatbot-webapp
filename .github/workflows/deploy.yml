@@ -34,4 +34,4 @@ jobs:
         with:
           name: ragbot-build
           path: |
-            ${{ github.workspace }}\build
+            ${{ github.workspace }}/build
