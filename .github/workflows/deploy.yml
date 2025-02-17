@@ -46,7 +46,7 @@ jobs:
       - name: Create Port Configuration Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ragbot-server
+          name: ragbot-portconfiguration
           path: |
             ${{ github.workspace }}/src/portConfigurtion.js
 
@@ -69,5 +69,5 @@ jobs:
       - name: Download Port Configuration to middleware
         uses: actions/download-artifact@v4
         with:
-          name: ragbot-server
+          name: ragbot-portconfiguration
           path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\src
