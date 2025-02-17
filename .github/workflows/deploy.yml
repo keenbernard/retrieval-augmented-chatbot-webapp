@@ -36,12 +36,12 @@ jobs:
           path: |
             ${{ github.workspace }}/build
 
-    deploy:
-      needs: build-and-deploy
-      runs-on: [self-hosted, test-frontend]
-      steps:
-        - name: Download result react frontend
-          uses: actions/download-artifact@v4
-          with:
-            name: ragbot-build
-            path: C:\MID_TRANSFER\React\ragbot
+  deploy:
+    needs: build-and-deploy
+    runs-on: [self-hosted, test-frontend]
+    steps:
+      - name: Download result react frontend
+        uses: actions/download-artifact@v4
+        with:
+          name: ragbot-build
+          path: C:\MID_TRANSFER\React\ragbot
