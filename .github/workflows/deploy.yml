@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -37,7 +37,7 @@ jobs:
             ${{ github.workspace }}/build
 
   deploy:
-    needs: build-and-deploy
+    needs: build
     runs-on: [self-hosted, test-frontend]
     steps:
       - name: Download result react frontend
