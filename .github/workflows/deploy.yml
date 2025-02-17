@@ -1,19 +1,17 @@
-name: Build and Deploy via PowerShell Remoting
+name: Build and Deploy via SMB
 
 on:
   push:
     branches:
-      - main
+      - main  # Change to your deployment branch
 
 jobs:
   build-and-deploy:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-      - name: 🔎 Check IP
-        run: curl https://api.ipify.org
 
       - name: Set up Node.js 20
         uses: actions/setup-node@v3
@@ -28,23 +26,11 @@ jobs:
 
       - name: Build Project
         run: |
+          export CI=false
           npm run build
 
-      - name: Deploy to Windows Server using PowerShell Remoting
-        shell: pwsh
+      - name: Copy Build Folder via SMB
         run: |
-          $secpasswd = ConvertTo-SecureString "${{ secrets.DEPLOY_PASSWORD }}" -AsPlainText -Force
-          $credential = New-Object System.Management.Automation.PSCredential ("${{ secrets.DEPLOY_USER }}", $secpasswd)
-          
-          Invoke-Command -ComputerName "${{ secrets.DEPLOY_HOST }}" -Credential $credential -ScriptBlock {
-            param ($deployPath)
-
-            Write-Host "Ensuring target directory exists..."
-            New-Item -ItemType Directory -Path $deployPath -Force | Out-Null
-
-            Write-Host "Copying build files..."
-            Copy-Item -Path "$env:GITHUB_WORKSPACE\build\*" -Destination "$deployPath\build" -Recurse -Force
-
-            Write-Host "Restarting IIS to apply changes..."
-            iisreset
-          } -ArgumentList "${{ secrets.DEPLOY_PATH }}"
+          sudo apt-get install -y cifs-utils  # Install SMB utilities
+          sudo mount -t cifs //${{ secrets.DEPLOY_HOST }}/MID_RAGBOT /mnt -o username=${{ secrets.DEPLOY_USER }},password=${{ secrets.DEPLOY_PASSWORD }},vers=3.0
+          sudo cp -r build/* /mnt/build/
