@@ -1,5 +1,5 @@
 import React, {createContext, useContext, useMemo, useState} from "react";
-import {localPort, prodPort, testPort} from "../portConfigurtion";
+import {localPort, testPort} from "../portConfigurtion";
 
 const ProfileState = createContext(undefined);
 
@@ -27,6 +27,7 @@ export const ProfileProvider = ({ children }) => {
     const fetchUserImageHeader = {method: "GET", headers: imageHeaders};
 
     const localHost = `http://localhost:${localPort}`;
+    const testHost = `http://172.21.56.34:${testPort}`;
     const serverConnection = localHost;
 
     return (

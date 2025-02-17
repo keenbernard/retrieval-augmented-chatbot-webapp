@@ -4,9 +4,9 @@ import { useMsalAuthentication } from "@azure/msal-react";
 import {InteractionType} from "@azure/msal-browser";
 import React, { useEffect, useState, useRef } from 'react';
 import Sidebar from './components/Sidebar/Sidebar';
-import {localPort} from "./portConfigurtion";
 import ProfileContent from "./components/Microsoft/ProfileContent";
 import SignOutButton from "./components/Microsoft/SignOutButton";
+import {useProfileData} from "./hooks/ProfileState";
 
 
 const App = () => {
@@ -15,6 +15,8 @@ const App = () => {
   const [activeChatId, setActiveChatId] = useState(null); // Currently active chat ID
   const [loading, setLoading] = useState(false);
   const chatHistory = useRef(null);
+  const {serverConnection} = useProfileData();
+
 
   const createNewChat = async (isInitial = false) => {
     const newChat = {
@@ -29,7 +31,7 @@ const App = () => {
 
     // Initialize the chat
     try {
-      const response = await fetch(`http://localhost:${localPort}/initialize`, {
+      const response = await fetch(`${serverConnection}/initialize`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -68,7 +70,7 @@ const App = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:${localPort}/query`, {
+      const response = await fetch(`${serverConnection}/query`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
