@@ -1,9 +1,9 @@
-name: Build and Deploy via SMB
+name: Build and Deploy to IIS
 
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   build:
@@ -43,6 +43,13 @@ jobs:
           path: |
             ${{ github.workspace }}/server/server.js
 
+      - name: Create Port Configuration Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ragbot-server
+          path: |
+            ${{ github.workspace }}/src/portConfigurtion.js
+
   deploy:
     needs: build
     runs-on: [self-hosted, midtest_frontend]
@@ -58,3 +65,9 @@ jobs:
         with:
           name: ragbot-server
           path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\server
+
+      - name: Download Port Configuration to middleware
+        uses: actions/download-artifact@v4
+        with:
+          name: ragbot-server
+          path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\src
