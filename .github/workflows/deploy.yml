@@ -29,6 +29,14 @@ jobs:
           export CI=false
           npm run build
 
+      - name: Debug SMB Connectivity
+        run: |
+          echo "Checking network connectivity..."
+          ping -c 4 172.21.56.34
+          
+          echo "Checking if SMB port 445 is open..."
+          nc -zv 172.21.56.34 445 || echo "Port 445 is not accessible!"
+
       - name: Copy Build Folder via SMB
         run: |
           sudo mount -t cifs //172.21.56.34/MID_RAGBOT /mnt \
