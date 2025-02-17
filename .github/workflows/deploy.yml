@@ -29,19 +29,32 @@ jobs:
           export CI=false
           npm run build
 
-      - name: Upload build folder to git
+      - name: Create build artifact
         uses: actions/upload-artifact@v4
         with:
           name: ragbot-build
           path: |
             ${{ github.workspace }}/build
 
+      - name: Create Server Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ragbot-server
+          path: |
+            ${{ github.workspace }}/server/server.js
+
   deploy:
     needs: build
     runs-on: [self-hosted, midtest_frontend]
     steps:
-      - name: Download result react frontend
+      - name: Download build to middleware
         uses: actions/download-artifact@v4
         with:
           name: ragbot-build
           path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\build
+
+      - name: Download server to middleware
+        uses: actions/download-artifact@v4
+        with:
+          name: ragbot-server
+          path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\server
