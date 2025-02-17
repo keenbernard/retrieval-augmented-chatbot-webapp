@@ -3,7 +3,7 @@ name: Build and Deploy via SMB
 on:
   push:
     branches:
-      - main  # Change to your deployment branch
+      - main
 
 jobs:
   build-and-deploy:
@@ -31,6 +31,9 @@ jobs:
 
       - name: Copy Build Folder via SMB
         run: |
-          sudo apt-get install -y cifs-utils  # Install SMB utilities
-          sudo mount -t cifs //${{ secrets.DEPLOY_HOST }}/MID_RAGBOT /mnt -o username=${{ secrets.DEPLOY_USER }},password=${{ secrets.DEPLOY_PASSWORD }},vers=3.0
+          sudo mount -t cifs //172.21.56.34/MID_RAGBOT /mnt \
+            -o username=${{ secrets.DEPLOY_USER }},password=${{ secrets.DEPLOY_PASSWORD }},vers=2.1
+          
           sudo cp -r build/* /mnt/build/
+          sudo umount /mnt
+
