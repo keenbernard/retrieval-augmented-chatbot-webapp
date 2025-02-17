@@ -10,7 +10,6 @@ export const useProfileData = () => {
 export const ProfileProvider = ({ children }) => {
     const [graphData, setGraphData] = useState(null);
     const [userToken, setUserToken] = useState('');
-    const [yammerToken, setYammerToken] = useState();
     const [userRole, setUserRole] = useState(localStorage.getItem("userRole"))
 
     const authorizationHeader = useMemo(() => {
@@ -31,7 +30,7 @@ export const ProfileProvider = ({ children }) => {
     const serverConnection = localHost;
 
     return (
-        <ProfileState.Provider value={{graphData, setGraphData, userToken, setUserToken, yammerToken, setYammerToken, setUserRole, fetchUserDataHeader, fetchUserImageHeader, serverConnection, userRole }}>
+        <ProfileState.Provider value={{graphData, setGraphData, userToken, setUserToken, setUserRole, fetchUserDataHeader, fetchUserImageHeader, serverConnection, userRole }}>
             {children}
         </ProfileState.Provider>
     );

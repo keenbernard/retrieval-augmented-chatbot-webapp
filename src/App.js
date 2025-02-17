@@ -128,9 +128,9 @@ const App = () => {
 
   return (
       <AuthenticatedTemplate>
-        <div className="chat-app">
+        <div className="chat-app" data-testid="chat-app">
           <ProfileContent />
-          <Sidebar
+          <Sidebar data-testid="side-bar-module"
               chats={chats}
               activeChatId={activeChatId}
               onNewChat={() => createNewChat(false)} // Pass `false` for user-created chats

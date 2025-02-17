@@ -1,0 +1,40 @@
+name: Build and Deploy via PowerShell Remoting
+
+on:
+  push:
+    branches:
+      - main  # Change to your deployment branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18  # Adjust based on your Node.js version
+
+      - name: Install Dependencies and Build
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy Build Folder to Windows Server
+        uses: malagant/psremoting-action@v1
+        with:
+          computer: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          script: |
+            Write-Host "Creating directory if it doesn't exist..."
+            New-Item -ItemType Directory -Path "${{ secrets.DEPLOY_PATH }}" -Force
+
+            Write-Host "Copying build folder..."
+            Copy-Item -Path "C:\middleware\midragbot\build\*" -Destination "${{ secrets.DEPLOY_PATH }}\build" -Recurse -Force
+
+            Write-Host "Restarting IIS to apply changes..."
+            iisreset
