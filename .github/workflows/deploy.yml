@@ -3,7 +3,7 @@ name: Build and Deploy via PowerShell Remoting
 on:
   push:
     branches:
-      - main  # Change to your deployment branch
+      - main  # Change to the branch you want to trigger deployment
 
 jobs:
   build-and-deploy:
@@ -23,18 +23,19 @@ jobs:
           npm install
           npm run build
 
-      - name: Deploy Build Folder to Windows Server
-        uses: malagant/psremoting-action@v1
-        with:
-          computer: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          password: ${{ secrets.DEPLOY_PASSWORD }}
-          script: |
-            Write-Host "Creating directory if it doesn't exist..."
+      - name: Deploy to Windows Server using PowerShell Remoting
+        shell: pwsh
+        run: |
+          $secpasswd = ConvertTo-SecureString "${{ secrets.DEPLOY_PASSWORD }}" -AsPlainText -Force
+          $credential = New-Object System.Management.Automation.PSCredential ("${{ secrets.DEPLOY_USER }}", $secpasswd)
+          
+          Invoke-Command -ComputerName "${{ secrets.DEPLOY_HOST }}" -Credential $credential -ScriptBlock {
+            Write-Host "Creating deployment directory..."
             New-Item -ItemType Directory -Path "${{ secrets.DEPLOY_PATH }}" -Force
-
-            Write-Host "Copying build folder..."
-            Copy-Item -Path "C:\middleware\midragbot\build\*" -Destination "${{ secrets.DEPLOY_PATH }}\build" -Recurse -Force
-
-            Write-Host "Restarting IIS to apply changes..."
+          
+            Write-Host "Copying build files..."
+            Copy-Item -Path "$env:GITHUB_WORKSPACE/build/*" -Destination "${{ secrets.DEPLOY_PATH }}/build" -Recurse -Force
+          
+            Write-Host "Restarting IIS..."
             iisreset
+          }
