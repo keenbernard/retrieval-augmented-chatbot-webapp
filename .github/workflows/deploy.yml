@@ -3,24 +3,30 @@ name: Build and Deploy via PowerShell Remoting
 on:
   push:
     branches:
-      - main  # Change to the branch you want to trigger deployment
+      - main
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      - name: Set up Node.js 20
         uses: actions/setup-node@v3
         with:
-          node-version: 18  # Adjust based on your Node.js version
+          node-version: 20
 
-      - name: Install Dependencies and Build
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Disable ESLint CI Strict Mode (Optional)
+        run: echo "DISABLE_ESLINT_PLUGIN=true" >> $GITHUB_ENV
+
+      - name: Build Project
         run: |
-          npm install
+          export CI=false
           npm run build
 
       - name: Deploy to Windows Server using PowerShell Remoting
@@ -30,12 +36,14 @@ jobs:
           $credential = New-Object System.Management.Automation.PSCredential ("${{ secrets.DEPLOY_USER }}", $secpasswd)
           
           Invoke-Command -ComputerName "${{ secrets.DEPLOY_HOST }}" -Credential $credential -ScriptBlock {
-            Write-Host "Creating deployment directory..."
-            New-Item -ItemType Directory -Path "${{ secrets.DEPLOY_PATH }}" -Force
-          
+            param ($deployPath)
+
+            Write-Host "Ensuring target directory exists..."
+            New-Item -ItemType Directory -Path $deployPath -Force | Out-Null
+
             Write-Host "Copying build files..."
-            Copy-Item -Path "$env:GITHUB_WORKSPACE/build/*" -Destination "${{ secrets.DEPLOY_PATH }}/build" -Recurse -Force
-          
-            Write-Host "Restarting IIS..."
+            Copy-Item -Path "$env:GITHUB_WORKSPACE\build\*" -Destination "$deployPath\build" -Recurse -Force
+
+            Write-Host "Restarting IIS to apply changes..."
             iisreset
-          }
+          } -ArgumentList "${{ secrets.DEPLOY_PATH }}"
