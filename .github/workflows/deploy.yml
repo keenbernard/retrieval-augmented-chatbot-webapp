@@ -29,11 +29,9 @@ jobs:
           export CI=false
           npm run build
 
-      - name: Copy Build Folder via SMB
-        run: |
-          sudo mount -t cifs //172.21.56.34/MID_RAGBOT /mnt \
-            -o username=${{ secrets.DEPLOY_USER }},password=${{ secrets.DEPLOY_PASSWORD }},vers=2.1
-          
-          sudo cp -r build/* /mnt/build/
-          sudo umount /mnt
-
+      - name: Upload build folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: ragbot-build
+          path: |
+            ${{ github.workspace }}\build
