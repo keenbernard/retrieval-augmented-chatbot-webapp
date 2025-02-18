@@ -66,6 +66,7 @@ jobs:
             ${{ github.workspace }}/src/portConfigurtion.js
 
   file_transfer:
+    needs: build
     runs-on: [self-hosted, windows]
     steps:
       - name: Download frontend build
