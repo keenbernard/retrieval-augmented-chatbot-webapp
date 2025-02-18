@@ -119,7 +119,7 @@ jobs:
       - name: Deploy to IIS
         shell: powershell
         run: |
-          $websiteName = "ai-bot"
+          $websiteName = "mid_ai-bot"
           $iisPath = "IIS:\Sites\$websiteName"
           $buildPath = "C:\middleware\MID_AI\build"
 
