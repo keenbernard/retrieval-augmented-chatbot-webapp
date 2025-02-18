@@ -2,6 +2,16 @@ name: Build and Deploy to Middleware Server
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - midprod_frontend
+          - middev_frontend
+          - midtest_frontend
 
 jobs:
   test:
@@ -65,7 +75,7 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: [self-hosted, windows]
+    runs-on: [self-hosted, ${{ inputs.environment }}]
     steps:
       - name: Download frontend build
         uses: actions/download-artifact@v4
