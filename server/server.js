@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { initializeIndex, queryRAG } = require('./routes/api');
 const portConfiguration = require('../src/portConfigurtion');
+const fs = require("fs");
+const https = require("https");
 
 // Load environment variables
 dotenv.config();
@@ -15,10 +17,17 @@ const PORT = process.env.PORT || portConfiguration.localPort;
 app.use(cors());
 app.use(bodyParser.json());
 
-// Start the server
+// Start the server http
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on ${PORT}`);
 });
+
+// Start the server https
+// const certificates = {
+//     middlewareTest: {pfx: fs.readFileSync('\\certificates\\wildcard_belizetelemedia_net-2024.pfx'), passphrase: '!D1giAcc355*'}
+// }
+// const httpsServer = https.createServer(certificates.middlewareTest, app);
+// httpsServer.listen(portConfiguration.testPort);
 
 app.post('/initialize', async (req, res) => {
     const { directory } = req.body;
