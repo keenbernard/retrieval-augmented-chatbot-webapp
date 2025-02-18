@@ -10,7 +10,6 @@ on:
         type: choice
         options:
           - midprod_frontend
-          - middev_frontend
           - midtest_frontend
 
 jobs:
