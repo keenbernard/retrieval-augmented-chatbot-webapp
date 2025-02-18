@@ -29,12 +29,13 @@ retrieval-augmented-chatbot-webapp/
 ### 4. **Deployment Phase:**
 - Runs only if tests pass.
 - Downloads the build artifacts.
-- Deploys files to the middleware server (`C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp`).
-- Installs server dependencies (`npm install`).
+- Deploys files to the middleware server (`C:\middleware\MID_AI`).
+- Installs server dependencies (`C:\middleware\MID_AI\server` `npm install`).
 
 ## Deployment
 - The deployment server is configured as a self-hosted runner (`midtest_frontend`).
 - IIS is used to serve the frontend.
+- Web App mid-ai-bot is created
 
 ## Troubleshooting
 ### **Permission Errors in Deployment**
