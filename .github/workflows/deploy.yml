@@ -5,6 +5,8 @@ on:
     branches:
       - develop
 
+  workflow_dispatch:
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -105,7 +107,7 @@ jobs:
           New-Item -ItemType Directory -Path "C:\middleware\MID_AI\server" -Force | Out-Null
 
           # Check if the IIS site exists
-          if (Test-Path $iisPath) {
+          if (Get-Website -Name $websiteName -ErrorAction SilentlyContinue) {
               Write-Output "Website $websiteName exists. Updating..."
               Stop-Website -Name $websiteName
           } else {
