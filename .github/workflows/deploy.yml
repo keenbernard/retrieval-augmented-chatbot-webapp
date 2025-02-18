@@ -135,7 +135,7 @@ jobs:
               Remove-Item -Path $buildPath -Recurse -Force
           } else {
               Write-Output "Creating new website $websiteName..."
-              New-Website -Name $websiteName -PhysicalPath $buildPath -Port 80
+              New-Website -Name $websiteName -PhysicalPath $buildPath -Port 3448
           }
 
           # Copy new frontend build
