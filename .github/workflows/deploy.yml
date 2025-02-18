@@ -2,8 +2,8 @@ name: Build and Deploy to Middleware Server
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - develop
 
 jobs:
   build:
