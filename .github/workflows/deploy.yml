@@ -1,69 +1,120 @@
-name: Deploy React Frontend and Server to IIS
+name: Build and Deploy to Middleware Server
 
 on:
   push:
     branches:
       - develop
-    paths:
-      - 'MID_AI/**'
-      - '.github/workflows/**'
 
 jobs:
-  build:
-    runs-on: windows-latest
+  test:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Install dependencies
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
         run: npm install
-        working-directory: ./MID_AI
 
-      - name: Build React app
-        run: npm run build
-        working-directory: ./MID_AI
+      - name: Run Tests
+        run: |
+          npm test -- --watchAll=false --ci
 
-      - name: Upload frontend build
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Project
+        run: |
+          export CI=false
+          npm run build
+
+      - name: Create Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: frontend-build
-          path: ./MID_AI/build
+          name: ragbot-build
+          path: |
+            ${{ github.workspace }}/build
 
-      - name: Upload port configuration file
+      - name: Create Server Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: port-config
-          path: ./MID_AI/src/portConfiguration.js
+          name: ragbot-server
+          path: |
+            ${{ github.workspace }}/server
 
-      - name: Upload backend server directory
+      - name: Create Port Configuration Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: server-files
-          path: ./MID_AI/server
+          name: ragbot-portconfiguration
+          path: |
+            ${{ github.workspace }}/src/portConfigurtion.js
+
+  file_transfer:
+    needs: build
+    runs-on: [self-hosted, midtest_frontend]
+    steps:
+      - name: Download Build
+        uses: actions/download-artifact@v4
+        with:
+          name: ragbot-build
+          path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\build
+
+      - name: Download Server
+        uses: actions/download-artifact@v4
+        with:
+          name: ragbot-server
+          path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\server
+
+      - name: Download Port Configuration
+        uses: actions/download-artifact@v4
+        with:
+          name: ragbot-portconfiguration
+          path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\src
 
   deploy:
-    needs: build
+    needs: file_transfer
     runs-on: [self-hosted, windows]
-
     steps:
       - name: Download frontend build
         uses: actions/download-artifact@v4
         with:
-          name: frontend-build
+          name: ragbot-build
           path: C:\middleware\MID_AI\build
 
       - name: Download port configuration file
         uses: actions/download-artifact@v4
         with:
-          name: port-config
+          name: ragbot-portconfiguration
           path: C:\middleware\MID_AI\src
 
       - name: Download backend server files
         uses: actions/download-artifact@v4
         with:
-          name: server-files
+          name: ragbot-server
           path: C:\middleware\MID_AI\server
+
+      - name: Install Server Dependencies
+        run: |
+          cd C:\middleware\MID_AI\server
+          npm install
 
       - name: Deploy to IIS
         shell: powershell
