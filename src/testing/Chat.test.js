@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import App from '../App';
 import fetchMock from 'jest-fetch-mock';
 import React from 'react';
-
+import { ProfileProvider } from '../hooks/ProfileState';
 
 jest.mock('@azure/msal-react', () => ({
   AuthenticatedTemplate: ({ children }) => <>{children}</>,
@@ -27,10 +27,13 @@ describe('App Component', () => {
   });
 
   test('renders App component without crashing', () => {
-    render(<App />);
+    render(
+        <ProfileProvider>
+          <App />
+        </ProfileProvider>
+    );
     expect(screen.getByTestId('profile-content')).toBeInTheDocument();
     expect(screen.getByTestId('sidebar')).toBeInTheDocument();
     expect(screen.getByTestId('sign-out')).toBeInTheDocument();
   });
-
 });
