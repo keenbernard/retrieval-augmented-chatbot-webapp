@@ -102,7 +102,7 @@ limitations under the License.
 [View the full workflow details here before proceeding](.github/WORKFLOW.md)
 
 ### Click me to Deploy
-[![Deploy Workflow](https://img.shields.io/badge/Run%20Deployment-%23007ec6?logo=githubactions&logoColor=white&style=for-the-badge)](https://github.com/keenbernard/retrieval-augmented-chatbot-webapp/actions/workflows/deploy.yml)
+[![Deploy Workflow](https://img.shields.io/badge/Run%20Deployment-%23FF0000?logo=githubactions&logoColor=white&style=for-the-badge)](https://github.com/keenbernard/retrieval-augmented-chatbot-webapp/actions/workflows/deploy.yml)
 
 ### Latest Deployment Status
 [![Build and Deploy to Middleware Server](https://github.com/keenbernard/retrieval-augmented-chatbot-webapp/actions/workflows/deploy.yml/badge.svg?branch=develop)](https://github.com/keenbernard/retrieval-augmented-chatbot-webapp/actions/workflows/deploy.yml)
