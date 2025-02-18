@@ -75,7 +75,9 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: [self-hosted, ${{ inputs.environment }}]
+    runs-on: ${{ inputs.environment == 'midprod_frontend' && 'self-hosted' ||
+      inputs.environment == 'middev_frontend' && 'self-hosted' ||
+      inputs.environment == 'midtest_frontend' && 'self-hosted' }}
     steps:
       - name: Download frontend build
         uses: actions/download-artifact@v4
