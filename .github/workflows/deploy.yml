@@ -1,90 +1,101 @@
-name: Build and Deploy to Middleware Server
+name: Deploy React Frontend and Server to IIS
 
 on:
   push:
     branches:
       - develop
+    paths:
+      - 'MID_AI/**'
+      - '.github/workflows/**'
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js 20
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Run Tests
-        run: |
-          npm test -- --watchAll=false --ci
-
   build:
-    needs: test
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js 20
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm install
+        working-directory: ./MID_AI
 
-      - name: Build Project
-        run: |
-          export CI=false
-          npm run build
+      - name: Build React app
+        run: npm run build
+        working-directory: ./MID_AI
 
-      - name: Create Build Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload frontend build
+        uses: actions/upload-artifact@v3
         with:
-          name: ragbot-build
-          path: |
-            ${{ github.workspace }}/build
+          name: frontend-build
+          path: ./MID_AI/build
 
-      - name: Create Server Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload port configuration file
+        uses: actions/upload-artifact@v3
         with:
-          name: ragbot-server
-          path: |
-            ${{ github.workspace }}/server
+          name: port-config
+          path: ./MID_AI/src/portConfiguration.js
 
-      - name: Create Port Configuration Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload backend server directory
+        uses: actions/upload-artifact@v3
         with:
-          name: ragbot-portconfiguration
-          path: |
-            ${{ github.workspace }}/src/portConfigurtion.js
+          name: server-files
+          path: ./MID_AI/server
 
   deploy:
     needs: build
-    runs-on: [self-hosted, midtest_frontend]
+    runs-on: [self-hosted, windows]
+
     steps:
-      - name: Download Build
-        uses: actions/download-artifact@v4
+      - name: Download frontend build
+        uses: actions/download-artifact@v3
         with:
-          name: ragbot-build
-          path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\build
+          name: frontend-build
+          path: C:\middleware\MID_AI\build
 
-      - name: Download Server
-        uses: actions/download-artifact@v4
+      - name: Download port configuration file
+        uses: actions/download-artifact@v3
         with:
-          name: ragbot-server
-          path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\server
+          name: port-config
+          path: C:\middleware\MID_AI\src
 
-      - name: Download Port Configuration
-        uses: actions/download-artifact@v4
+      - name: Download backend server files
+        uses: actions/download-artifact@v3
         with:
-          name: ragbot-portconfiguration
-          path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\src
+          name: server-files
+          path: C:\middleware\MID_AI\server
+
+      - name: Deploy to IIS
+        shell: powershell
+        run: |
+          $websiteName = "ai-bot"
+          $iisPath = "IIS:\Sites\$websiteName"
+          $buildPath = "C:\middleware\MID_AI\build"
+
+          # Ensure the directories exist
+          New-Item -ItemType Directory -Path $buildPath -Force | Out-Null
+          New-Item -ItemType Directory -Path "C:\middleware\MID_AI\src" -Force | Out-Null
+          New-Item -ItemType Directory -Path "C:\middleware\MID_AI\server" -Force | Out-Null
+
+          # Check if the IIS site exists
+          if (Test-Path $iisPath) {
+              Write-Output "Website $websiteName exists. Updating..."
+              Stop-Website -Name $websiteName
+              Remove-Item -Path $buildPath -Recurse -Force
+          } else {
+              Write-Output "Creating new website $websiteName..."
+              New-Website -Name $websiteName -PhysicalPath $buildPath -Port 80
+          }
+
+          # Copy new frontend build
+          Copy-Item -Path "C:\middleware\MID_AI\build\*" -Destination $buildPath -Recurse -Force
+
+          # Copy backend server files
+          Copy-Item -Path "C:\middleware\MID_AI\server\*" -Destination "C:\middleware\MID_AI\server" -Recurse -Force
+
+          # Copy port configuration file
+          Copy-Item -Path "C:\middleware\MID_AI\src\portConfiguration.js" -Destination "C:\middleware\MID_AI\src\portConfiguration.js" -Force
+
+          # Restart IIS site
+          Start-Website -Name $websiteName
+          Write-Output "Deployment complete!"
