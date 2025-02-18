@@ -8,7 +8,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -28,7 +27,6 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -68,29 +66,6 @@ jobs:
             ${{ github.workspace }}/src/portConfigurtion.js
 
   file_transfer:
-    needs: build
-    runs-on: [self-hosted, midtest_frontend]
-    steps:
-      - name: Download Build
-        uses: actions/download-artifact@v4
-        with:
-          name: ragbot-build
-          path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\build
-
-      - name: Download Server
-        uses: actions/download-artifact@v4
-        with:
-          name: ragbot-server
-          path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\server
-
-      - name: Download Port Configuration
-        uses: actions/download-artifact@v4
-        with:
-          name: ragbot-portconfiguration
-          path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\src
-
-  deploy:
-    needs: file_transfer
     runs-on: [self-hosted, windows]
     steps:
       - name: Download frontend build
@@ -116,37 +91,37 @@ jobs:
           cd C:\middleware\MID_AI\server
           npm install
 
-      - name: Deploy to IIS
-        shell: powershell
-        run: |
-          $websiteName = "mid_ai-bot"
-          $iisPath = "IIS:\Sites\$websiteName"
-          $buildPath = "C:\middleware\MID_AI\build"
-
-          # Ensure the directories exist
-          New-Item -ItemType Directory -Path $buildPath -Force | Out-Null
-          New-Item -ItemType Directory -Path "C:\middleware\MID_AI\src" -Force | Out-Null
-          New-Item -ItemType Directory -Path "C:\middleware\MID_AI\server" -Force | Out-Null
-
-          # Check if the IIS site exists
-          if (Test-Path $iisPath) {
-              Write-Output "Website $websiteName exists. Updating..."
-              Stop-Website -Name $websiteName
-              Remove-Item -Path $buildPath -Recurse -Force
-          } else {
-              Write-Output "Creating new website $websiteName..."
-              New-Website -Name $websiteName -PhysicalPath $buildPath -Port 3448
-          }
-
-          # Copy new frontend build
-          Copy-Item -Path "C:\middleware\MID_AI\build\*" -Destination $buildPath -Recurse -Force
-
-          # Copy backend server files
-          Copy-Item -Path "C:\middleware\MID_AI\server\*" -Destination "C:\middleware\MID_AI\server" -Recurse -Force
-
-          # Copy port configuration file
-          Copy-Item -Path "C:\middleware\MID_AI\src\portConfiguration.js" -Destination "C:\middleware\MID_AI\src\portConfiguration.js" -Force
-
-          # Restart IIS site
-          Start-Website -Name $websiteName
-          Write-Output "Deployment complete!"
+#      - name: Deploy to IIS
+#        shell: powershell
+#        run: |
+#          $websiteName = "mid_ai-bot"
+#          $iisPath = "IIS:\Sites\$websiteName"
+#          $buildPath = "C:\middleware\MID_AI\build"
+#
+#          # Ensure the directories exist
+#          New-Item -ItemType Directory -Path $buildPath -Force | Out-Null
+#          New-Item -ItemType Directory -Path "C:\middleware\MID_AI\src" -Force | Out-Null
+#          New-Item -ItemType Directory -Path "C:\middleware\MID_AI\server" -Force | Out-Null
+#
+#          # Check if the IIS site exists
+#          if (Test-Path $iisPath) {
+#              Write-Output "Website $websiteName exists. Updating..."
+#              Stop-Website -Name $websiteName
+#              Remove-Item -Path $buildPath -Recurse -Force
+#          } else {
+#              Write-Output "Creating new website $websiteName..."
+#              New-Website -Name $websiteName -PhysicalPath $buildPath -Port 3448
+#          }
+#
+#          # Copy new frontend build
+#          Copy-Item -Path "C:\middleware\MID_AI\build\*" -Destination $buildPath -Recurse -Force
+#
+#          # Copy backend server files
+#          Copy-Item -Path "C:\middleware\MID_AI\server\*" -Destination "C:\middleware\MID_AI\server" -Recurse -Force
+#
+#          # Copy port configuration file
+#          Copy-Item -Path "C:\middleware\MID_AI\src\portConfiguration.js" -Destination "C:\middleware\MID_AI\src\portConfiguration.js" -Force
+#
+#          # Restart IIS site
+#          Start-Website -Name $websiteName
+#          Write-Output "Deployment complete!"
