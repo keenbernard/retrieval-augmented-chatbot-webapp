@@ -16,21 +16,23 @@ retrieval-augmented-chatbot-webapp/
 
 ## CI/CD Workflow
 ### 1. **Trigger:**
-- The workflow runs when code is pushed to the `develop` branch.
+- The workflow runs when triggered from GitHub via actions section. Select branch to deploy `develop` and environment `midtest_frontend`.
 
 ### 2. **Test Phase:**
 - Runs unit tests using Jest (`npm test -- --watchAll=false --ci`).
 
 ### 3. **Build Phase:**
+- Runs only if tests pass.
 - Installs dependencies (`npm install`).
 - Builds the frontend (`npm run build`).
-- Creates build artifacts.
+- Creates build, server & portConfiguration artifacts.
 
 ### 4. **Deployment Phase:**
-- Runs only if tests pass.
+- Runs only if build pass.
 - Downloads the build artifacts.
 - Deploys files to the middleware server (`C:\middleware\MID_AI`).
 - Installs server dependencies (`C:\middleware\MID_AI\server` `npm install`).
+- Deploys new Website to IIS using build path (`"C:\middleware\MID_AI\build"`).
 
 ## Deployment
 - The deployment server is configured as a self-hosted runner (`midtest_frontend`).

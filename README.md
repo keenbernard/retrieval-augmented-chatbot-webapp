@@ -99,6 +99,8 @@ limitations under the License.
 
 
 ## Build and Deployment
+[View the full workflow details here before proceeding](.github/WORKFLOW.md)
+
 ### Click me to Deploy
 [![Deploy Workflow](https://img.shields.io/badge/Run%20Deployment-%23007ec6?logo=githubactions&logoColor=white&style=for-the-badge)](https://github.com/keenbernard/retrieval-augmented-chatbot-webapp/actions/workflows/deploy.yml)
 
