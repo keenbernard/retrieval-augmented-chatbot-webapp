@@ -96,3 +96,11 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+
+## Build and Deployment
+### Click me to Deploy
+[![Deploy Workflow](https://img.shields.io/badge/Run%20Deployment-%23007ec6?logo=githubactions&logoColor=white&style=for-the-badge)](https://github.com/keenbernard/retrieval-augmented-chatbot-webapp/actions/workflows/deploy.yml)
+
+### Latest Deployment Status
+[![Build and Deploy to Middleware Server](https://github.com/keenbernard/retrieval-augmented-chatbot-webapp/actions/workflows/deploy.yml/badge.svg?branch=develop)](https://github.com/keenbernard/retrieval-augmented-chatbot-webapp/actions/workflows/deploy.yml)
