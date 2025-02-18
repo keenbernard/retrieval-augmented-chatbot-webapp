@@ -1,9 +1,9 @@
-name: Build and Deploy to IIS
+name: Build and Deploy to Middleware Server
 
 on:
   push:
-    branches:
-      - develop
+    tags:
+      - "v*"
 
 jobs:
   build:
@@ -21,15 +21,12 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Disable ESLint CI Strict Mode
-        run: echo "DISABLE_ESLINT_PLUGIN=true" >> $GITHUB_ENV
-
       - name: Build Project
         run: |
           export CI=false
           npm run build
 
-      - name: Create build artifact
+      - name: Create Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ragbot-build
@@ -41,7 +38,7 @@ jobs:
         with:
           name: ragbot-server
           path: |
-            ${{ github.workspace }}/server/server.js
+            ${{ github.workspace }}/server
 
       - name: Create Port Configuration Artifact
         uses: actions/upload-artifact@v4
@@ -54,20 +51,25 @@ jobs:
     needs: build
     runs-on: [self-hosted, midtest_frontend]
     steps:
-      - name: Download build to middleware
+      - name: Download Build
         uses: actions/download-artifact@v4
         with:
           name: ragbot-build
           path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\build
 
-      - name: Download server to middleware
+      - name: Download Server
         uses: actions/download-artifact@v4
         with:
           name: ragbot-server
           path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\server
 
-      - name: Download Port Configuration to middleware
+      - name: Download Port Configuration
         uses: actions/download-artifact@v4
         with:
           name: ragbot-portconfiguration
           path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\src
+
+      - name: Install Server Dependencies
+        run: |
+          cd C:\middleware\MID_RAGBOT\server
+          npm install
