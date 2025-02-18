@@ -88,8 +88,3 @@ jobs:
         with:
           name: ragbot-portconfiguration
           path: C:\MID_TRANSFER\React\retrieval-augmented-chatbot-webapp\src
-
-      - name: Install Server Dependencies
-        run: |
-          cd C:\middleware\MID_RAGBOT\server
-          npm install
