@@ -1,9 +1,7 @@
-name: Build and Deploy to Middleware Production Server
+
+name: Build and Deploy to Middleware Server
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       environment:
@@ -13,6 +11,7 @@ on:
         type: choice
         options:
           - midprod_frontend
+          - midtest_frontend
 
 jobs:
   test:
@@ -78,7 +77,8 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: ${{ inputs.environment == 'midprod_frontend' && 'self-hosted' }}
+    runs-on: ${{ inputs.environment == 'midprod_frontend' && 'self-hosted' ||
+      inputs.environment == 'midtest_frontend' && 'self-hosted' }}
     steps:
       - name: Download frontend build
         uses: actions/download-artifact@v4
