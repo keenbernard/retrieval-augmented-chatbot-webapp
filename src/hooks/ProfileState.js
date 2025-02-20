@@ -27,7 +27,7 @@ export const ProfileProvider = ({ children }) => {
     const fetchUserImageHeader = {method: "GET", headers: imageHeaders};
 
     const localHost = `http://localhost:${localPort}`;
-    const testHost = `http://172.21.56.34:${testPort}`;
+    const testHost = `https://172.21.56.34:${testPort}`;
     const serverConnection = testHost;
 
     return (
