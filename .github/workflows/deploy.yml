@@ -108,41 +108,21 @@ jobs:
           $websiteName = "mid_ai-bot"
           $iisPath = "IIS:\Sites\$websiteName"
           $buildPath = "C:\middleware\MID_AI\build"
-          $sslCertName = "belizetelemedia_Wildcard-2024"
-          $httpsPort = 3448
-          
+
           # Ensure the directories exist
           New-Item -ItemType Directory -Path $buildPath -Force | Out-Null
           New-Item -ItemType Directory -Path "C:\middleware\MID_AI\src" -Force | Out-Null
           New-Item -ItemType Directory -Path "C:\middleware\MID_AI\server" -Force | Out-Null
-          
+
           # Check if the IIS site exists
           if (Get-Website -Name $websiteName -ErrorAction SilentlyContinue) {
               Write-Output "Website $websiteName exists. Updating..."
               Stop-Website -Name $websiteName
           } else {
               Write-Output "Creating new website $websiteName..."
-              New-Website -Name $websiteName -PhysicalPath $buildPath -Port 80
+              New-Website -Name $websiteName -PhysicalPath $buildPath -Port 3449
           }
-          
-          # Ensure HTTPS binding is set up
-          $binding = Get-WebBinding -Name $websiteName -Protocol "https" -ErrorAction SilentlyContinue
-          if ($null -eq $binding) {
-              Write-Output "Adding HTTPS binding to $websiteName..."
-              New-WebBinding -Name $websiteName -Protocol "https" -Port $httpsPort
-              # Assign SSL certificate
-              $cert = Get-Item "Cert:\LocalMachine\My\" | Where-Object { $_.FriendlyName -eq $sslCertName }
-              if ($null -ne $cert) {
-                  Write-Output "Assigning SSL Certificate..."
-                  New-Item -Path "IIS:\SSLBindings\0.0.0.0!$httpsPort" -Thumbprint $cert.Thumbprint -CertificateStoreName "My" -Force
-              } else {
-                  Write-Output "SSL Certificate not found! Make sure it is installed in LocalMachine\My store."
-              }
-          } else {
-              Write-Output "HTTPS binding already exists."
-          }
-          
+
           # Restart IIS site
           Start-Website -Name $websiteName
-          Write-Output "Deployment complete with HTTPS!"
-
+          Write-Output "Deployment complete!"
