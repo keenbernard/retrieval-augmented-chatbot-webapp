@@ -124,7 +124,7 @@ jobs:
               Stop-Website -Name $websiteName
           } else {
               Write-Output "Creating new website $websiteName..."
-              New-Website -Name $websiteName -PhysicalPath $buildPath -Port 3449 -CertStoreLocation $certStoreLocation -Protocol https
+              New-Website -Name $websiteName -PhysicalPath $buildPath -Port 3448 -CertStoreLocation $certStoreLocation -Protocol https
           }
 
           # Restart IIS site
