@@ -150,14 +150,14 @@ jobs:
           
           # Assign SSL Certificate to HTTPS binding
           if ($existingSSL) {
-            Write-Output "SSL Certificate already assigned to port 
+              Write-Output "SSL Certificate already assigned to port 
           } else {
-            Write-Output "Assigning SSL Certificate to $websiteName..."
-            $cmd = "netsh http add sslcert ipport=172.21.56.34:$httpsPort certhash=$certificateThumbprint appid='{4dc3e181-e14b-4a21-b022-59fc669b0914}'"
-            Invoke-Expression $cmd
-            Write-Output "SSL Certificate assigned successfully."
+              Write-Output "Assigning SSL Certificate to $websiteName..."
+              $cmd = "netsh http add sslcert ipport=172.21.56.34:$httpsPort certhash=$certificateThumbprint appid='{4dc3e181-e14b-4a21-b022-59fc669b0914}'"
+              Invoke-Expression $cmd
+              Write-Output "SSL Certificate assigned successfully."
           }
-
+          
           # Restart IIS site
           Start-Website -Name $websiteName
           Write-Output "Deployment complete!"
