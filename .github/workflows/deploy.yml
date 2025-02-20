@@ -124,8 +124,21 @@ jobs:
               Stop-Website -Name $websiteName
           } else {
               Write-Output "Creating new website $websiteName..."
-              New-Website -Name $websiteName -PhysicalPath $buildPath -BindingInformation $bindingInformation -CertificateThumbPrint $certificateThumbprint -CertStoreLocation $certStoreLocation -Protocol https
+              New-Website -Name $websiteName -PhysicalPath $buildPath -Port 3449
           }
+          
+          # Check if HTTPS binding already exists
+          $existingBinding = Get-WebBinding -Name $websiteName -Protocol "https" -ErrorAction SilentlyContinue
+          if (-not $existingBinding) {
+          Write-Output "Adding HTTPS binding to $websiteName on port $httpsPort..."
+          New-WebBinding -Name $websiteName -IPAddress "*" -Port $httpsPort -Protocol https
+          }
+
+          # Assign SSL Certificate to HTTPS binding
+          Write-Output "Assigning SSL Certificate to $websiteName..."
+          $cmd = "netsh http add sslcert ipport=0.0.0.0:$httpsPort certhash=$certificateThumbprint appid={`{00112233-4455-6677-8899-AABBCCDDEEFF`}}"
+          Invoke-Expression $cmd
+          Write-Output "SSL Certificate assigned successfully."
 
           # Restart IIS site
           Start-Website -Name $websiteName
