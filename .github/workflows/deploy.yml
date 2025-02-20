@@ -111,6 +111,8 @@ jobs:
           $buildPath = "C:\middleware\MID_AI\build"
           $certificateThumbprint = "5A89675513DE81A903ABA94A904F48F3941F661C"
           $certStoreLocation = "Cert:\LocalMachine\My"
+          $httpPort = 3449
+          $httpsPort = 3448
 
           # Ensure the directories exist
           New-Item -ItemType Directory -Path $buildPath -Force | Out-Null
@@ -126,7 +128,7 @@ jobs:
               Stop-Website -Name $websiteName
           } else {
               Write-Output "Creating new website $websiteName..."
-              New-Website -Name $websiteName -PhysicalPath $buildPath -Port 3449
+              New-Website -Name $websiteName -PhysicalPath $buildPath -Port $httpPort
           }
           
           # Ensure HTTP Binding Exists
@@ -139,12 +141,12 @@ jobs:
           # Ensure HTTPS binding exists
           if (-not (Get-WebBinding -Name $websiteName -Protocol "https" -ErrorAction SilentlyContinue)) {
             Write-Output "Adding HTTPS binding on port $httpsPort..."
-            New-WebBinding -Name $websiteName -IPAddress "*" -Port 3448 -Protocol https
+            New-WebBinding -Name $websiteName -IPAddress "*" -Port $httpsPort -Protocol https
           }
           
           # Assign SSL Certificate to HTTPS binding
           Write-Output "Assigning SSL Certificate to $websiteName..."
-          $cmd = "netsh http add sslcert ipport=0.0.0.0:$httpsPort certhash=$certificateThumbprint appid={D92DD01F-ACAF-4F26-BCBF-7BD42D95D96F}"
+          $cmd = "netsh http add sslcert ipport=0.0.0.0:$httpsPort certhash=$certificateThumbprint appid={4dc3e181-e14b-4a21-b022-59fc669b0914}"
           Invoke-Expression $cmd
           Write-Output "SSL Certificate assigned successfully."
 
