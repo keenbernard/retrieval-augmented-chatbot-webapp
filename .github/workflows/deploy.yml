@@ -144,7 +144,7 @@ jobs:
           
           # Assign SSL Certificate to HTTPS binding
           Write-Output "Assigning SSL Certificate to $websiteName..."
-          $cmd = "netsh http add sslcert ipport=0.0.0.0:$httpsPort certhash=$certificateThumbprint appid={00000000-0000-0000-0000-000000000000}"
+          $cmd = "netsh http add sslcert ipport=0.0.0.0:$httpsPort certhash=$certificateThumbprint appid={D92DD01F-ACAF-4F26-BCBF-7BD42D95D96F}"
           Invoke-Expression $cmd
           Write-Output "SSL Certificate assigned successfully."
 
