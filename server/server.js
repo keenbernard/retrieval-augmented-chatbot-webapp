@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 
 // Start the server https
 const certificates = {
-    middlewareTest: {pfx: fs.readFileSync('\\certificates\\wildcard_belizetelemedia_net-2024.pfx'), passphrase: '!D1giAcc355*'}
+    middlewareTest: {pfx: fs.readFileSync('C:\\BTLcerts\\wildcard_belizetelemedia_net-2024.pfx'), passphrase: '!D1giAcc355*'}
 }
 const httpsServer = https.createServer(certificates.middlewareTest, app);
 httpsServer.listen(PORT);
