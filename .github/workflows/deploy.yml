@@ -109,7 +109,7 @@ jobs:
           $websiteName = "mid_ai-bot"
           $iisPath = "IIS:\Sites\$websiteName"
           $buildPath = "C:\middleware\MID_AI\build"
-          $bindingInformation = "*:8443:"
+          $bindingInformation = 8443
           $certificateThumbprint = "5A89675513DE81A903ABA94A904F48F3941F661C"
           $certStoreLocation = "Cert:\LocalMachine\My"
 
@@ -117,6 +117,9 @@ jobs:
           New-Item -ItemType Directory -Path $buildPath -Force | Out-Null
           New-Item -ItemType Directory -Path "C:\middleware\MID_AI\src" -Force | Out-Null
           New-Item -ItemType Directory -Path "C:\middleware\MID_AI\server" -Force | Out-Null
+          
+          # Import IIS Module
+          Import-Module WebAdministration
 
           # Check if the IIS site exists
           if (Get-Website -Name $websiteName -ErrorAction SilentlyContinue) {
