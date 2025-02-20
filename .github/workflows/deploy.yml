@@ -109,7 +109,6 @@ jobs:
           $websiteName = "mid_ai-bot"
           $iisPath = "IIS:\Sites\$websiteName"
           $buildPath = "C:\middleware\MID_AI\build"
-          $bindingInformation = 8443
           $certificateThumbprint = "5A89675513DE81A903ABA94A904F48F3941F661C"
           $certStoreLocation = "Cert:\LocalMachine\My"
 
@@ -133,7 +132,7 @@ jobs:
           # Ensure HTTP binding exists
           if (-not (Get-WebBinding -Name $websiteName -Protocol "http" -ErrorAction SilentlyContinue)) {
             Write-Output "Adding HTTP binding on port $httpPort..."
-            New-WebBinding -Name $websiteName -IPAddress "*" -Port $httpPort -Protocol http
+            New-WebBinding -Name $websiteName -IPAddress "*" -Port 3448 -Protocol http
           }
           
           # Ensure HTTPS binding exists
