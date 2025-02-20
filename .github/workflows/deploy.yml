@@ -113,7 +113,6 @@ jobs:
           $certStoreLocation = "Cert:\LocalMachine\My"
           $httpPort = 3449
           $httpsPort = 3448
-          $ipPort = '172.21.56.34:3448'
 
           # Ensure the directories exist
           New-Item -ItemType Directory -Path $buildPath -Force | Out-Null
@@ -147,7 +146,7 @@ jobs:
           
           # Assign SSL Certificate to HTTPS binding
           Write-Output "Assigning SSL Certificate to $websiteName..."
-          $cmd = "netsh http add sslcert ipport=$ipPort certhash=$certificateThumbprint appid='{4dc3e181-e14b-4a21-b022-59fc669b0914}'"
+          $cmd = "netsh http add sslcert ipport=172.21.56.34:$httpsPort certhash=$certificateThumbprint appid='{4dc3e181-e14b-4a21-b022-59fc669b0914}'"
           Invoke-Expression $cmd
           Write-Output "SSL Certificate assigned successfully."
 
