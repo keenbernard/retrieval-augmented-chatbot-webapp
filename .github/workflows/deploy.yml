@@ -102,54 +102,52 @@ jobs:
           cd C:\middleware\MID_AI\server
           npm install
 
-      - name: Deploy to IIS
+      - name: Deploy to IIS (HTTPS Configuration)
         shell: powershell
         run: |
           $websiteName = "mid_ai-bot"
+          $iisPath = "IIS:\Sites\$websiteName"
           $buildPath = "C:\middleware\MID_AI\build"
-          $port = 3448
-          $certPath = "C:\BTLcerts\wildcard_belizetelemedia_net-2024.pfx"
-          $certPassword = "!D1giAcc355*"
-          $certThumbprint = "" # 
-          $sslCertificateStore = "Cert:\LocalMachine\My"
+          $sslCertName = "belizetelemedia_Wildcard-2024"
+          $httpsPort = 3448
           
-          $password = ConvertTo-SecureString $certPassword -AsPlainText -Force
-          $importedCert = Import-PfxCertificate -FilePath $certPath -CertStoreLocation $sslCertificateStore -Password $password
-          $certThumbprint = $importedCert.Thumbprint
-          
-          Write-Output "Imported SSL Certificate with Thumbprint: $certThumbprint"
-
           # Ensure the directories exist
-            New-Item -ItemType Directory -Path $buildPath -Force | Out-Null
-            
-            # Check if the IIS site exists
-            if (Get-Website -Name $websiteName -ErrorAction SilentlyContinue) {
-            Write-Output "Website $websiteName exists. Updating..."
-            Stop-Website -Name $websiteName
+          New-Item -ItemType Directory -Path $buildPath -Force | Out-Null
+          New-Item -ItemType Directory -Path "C:\middleware\MID_AI\src" -Force | Out-Null
+          New-Item -ItemType Directory -Path "C:\middleware\MID_AI\server" -Force | Out-Null
+          
+          # Check if the IIS site exists
+          if (Get-Website -Name $websiteName -ErrorAction SilentlyContinue) {
+              Write-Output "Website $websiteName exists. Updating..."
+              Stop-Website -Name $websiteName
           } else {
-            Write-Output "Creating new website $websiteName..."
-            New-Website -Name $websiteName -PhysicalPath $buildPath -Port $port -Force
-          }
-
-          # Ensure HTTPS Binding Exists
-            $existingBinding = Get-WebBinding -Name $websiteName -Protocol "https" -ErrorAction SilentlyContinue
-            if (-not $existingBinding) {
-            Write-Output "Adding HTTPS binding to $websiteName..."
-            New-WebBinding -Name $websiteName -IPAddress "*" -Port $port -Protocol https
-          } else {
-            Write-Output "HTTPS binding already exists."
+              Write-Output "Creating new website $websiteName..."
+              New-Website -Name $websiteName -PhysicalPath $buildPath -Port $httpsPort
           }
           
-          # Assign SSL Certificate to IIS Binding
-            Write-Output "Assigning SSL Certificate to $websiteName..."
-            $binding = Get-WebBinding -Name $websiteName -Protocol https | Where-Object { $_.bindingInformation -like "*:$port:*" }
-            if ($binding) {
-            $cmd = "netsh http add sslcert ipport=0.0.0.0:$port certhash=$certThumbprint appid={`{00112233-4455-6677-8899-AABBCCDDEEFF`}}"
-            Invoke-Expression $cmd
+          # Ensure HTTPS Binding Exists
+          $existingBinding = Get-WebBinding -Name $websiteName -Protocol "https" -ErrorAction SilentlyContinue
+          if (-not $existingBinding) {
+              Write-Output "Adding HTTPS binding to $websiteName on port $httpsPort..."
+              New-WebBinding -Name $websiteName -IPAddress "*" -Port $httpsPort -Protocol https
           } else {
-            Write-Output "SSL certificate already assigned."
+              Write-Output "HTTPS binding already exists."
+          }
+          
+          # Assign SSL Certificate
+          Write-Output "Assigning SSL Certificate: $sslCertName"
+          $cert = Get-ChildItem -Path Cert:\LocalMachine\My | Where-Object { $_.FriendlyName -eq $sslCertName }
+          if ($cert) {
+              $certThumbprint = $cert.Thumbprint
+              $cmd = "netsh http add sslcert ipport=0.0.0.0:$httpsPort certhash=$certThumbprint appid={`{00112233-4455-6677-8899-AABBCCDDEEFF`}}"
+              Invoke-Expression $cmd
+              Write-Output "SSL Certificate assigned successfully."
+          } else {
+              Write-Output "ERROR: SSL Certificate '$sslCertName' not found in LocalMachine\My store!"
+              exit 1
           }
           
           # Restart IIS site
           Start-Website -Name $websiteName
-          Write-Output "Deployment complete with HTTPS and SSL Certificate assigned!"
+          Write-Output "Deployment complete with HTTPS enabled!"
+    
