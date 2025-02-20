@@ -129,16 +129,10 @@ jobs:
               New-Website -Name $websiteName -PhysicalPath $buildPath -Port 3449
           }
           
-          # Ensure HTTP binding exists
-          if (-not (Get-WebBinding -Name $websiteName -Protocol "http" -ErrorAction SilentlyContinue)) {
-            Write-Output "Adding HTTP binding on port $httpPort..."
-            New-WebBinding -Name $websiteName -IPAddress "*" -Port 3448 -Protocol http
-          }
-          
           # Ensure HTTPS binding exists
           if (-not (Get-WebBinding -Name $websiteName -Protocol "https" -ErrorAction SilentlyContinue)) {
             Write-Output "Adding HTTPS binding on port $httpsPort..."
-            New-WebBinding -Name $websiteName -IPAddress "*" -Port $httpsPort -Protocol https
+            New-WebBinding -Name $websiteName -IPAddress "*" -Port 3448 -Protocol https
           }
           
           # Assign SSL Certificate to HTTPS binding
