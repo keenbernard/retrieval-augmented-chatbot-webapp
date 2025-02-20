@@ -109,6 +109,9 @@ jobs:
           $websiteName = "mid_ai-bot"
           $iisPath = "IIS:\Sites\$websiteName"
           $buildPath = "C:\middleware\MID_AI\build"
+          $bindingInformation = "*:8443:"
+          $certificateThumbprint = "5A89675513DE81A903ABA94A904F48F3941F661C"
+          $certStoreLocation = "Cert:\LocalMachine\My"
 
           # Ensure the directories exist
           New-Item -ItemType Directory -Path $buildPath -Force | Out-Null
@@ -121,7 +124,7 @@ jobs:
               Stop-Website -Name $websiteName
           } else {
               Write-Output "Creating new website $websiteName..."
-              New-Website -Name $websiteName -PhysicalPath $buildPath -Port 3448
+              New-Website -Name $websiteName -PhysicalPath $buildPath -BindingInformation $bindingInformation -CertificateThumbPrint $certificateThumbprint -CertStoreLocation $certStoreLocation -Protocol https
           }
 
           # Restart IIS site
