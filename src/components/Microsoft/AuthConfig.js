@@ -12,14 +12,14 @@ const prodConfig = {
 };
 
 const testConfig = {
-    clientId: '34562b80-53a5-4e9f-b224-2397cf57cb9f',
+    clientId: 'defda4fe-2a52-4729-8c18-c191cc5829cd',
     authority: 'https://login.microsoftonline.com/a209cfec-d685-41c4-8e6f-4a4c0917c8ea',
-    redirectUri: 'https://172.21.56.34:443'
+    redirectUri: 'https://172.21.56.34:3448'
 };
 
 export const msalConfig = {
     //Redirect Configuration
-    auth: localConfig,
+    auth: testConfig,
     cache: {
         cacheLocation: 'sessionStorage',
         storeAuthStateInCookie: true,

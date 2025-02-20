@@ -11,23 +11,23 @@ const https = require("https");
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || portConfiguration.localPort;
+const PORT = process.env.PORT || portConfiguration.testPort;
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
 // Start the server http
-app.listen(PORT, () => {
-    console.log(`Server is running on ${PORT}`);
-});
+// app.listen(PORT, () => {
+//     console.log(`Server is running on ${PORT}`);
+// });
 
 // Start the server https
-// const certificates = {
-//     middlewareTest: {pfx: fs.readFileSync('\\certificates\\wildcard_belizetelemedia_net-2024.pfx'), passphrase: '!D1giAcc355*'}
-// }
-// const httpsServer = https.createServer(certificates.middlewareTest, app);
-// httpsServer.listen(portConfiguration.testPort);
+const certificates = {
+    middlewareTest: {pfx: fs.readFileSync('\\certificates\\wildcard_belizetelemedia_net-2024.pfx'), passphrase: '!D1giAcc355*'}
+}
+const httpsServer = https.createServer(certificates.middlewareTest, app);
+httpsServer.listen(PORT);
 
 app.post('/initialize', async (req, res) => {
     const { directory } = req.body;
