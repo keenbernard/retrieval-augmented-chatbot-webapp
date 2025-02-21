@@ -161,14 +161,11 @@ jobs:
           # Get the existing site binding
           $binding = Get-WebBinding -Name $websiteName -Protocol https -Port $httpsPort -ErrorAction SilentlyContinue
           
-            if (-not $binding) {
-            Write-Output "Adding HTTPS binding to IIS..."
-            New-WebBinding -Name $websiteName -Protocol https -Port $httpsPort -IPAddress "*" -CertificateThumbprint $certificateThumbprint -CertStoreLocation $certStoreLocation
-          } else {
-            Write-Output "HTTPS binding already exists in IIS."
-          }
-            
-            Write-Output "SSL Certificate correctly assigned in IIS!"
+          # Assign SSL Certificate to IIS HTTPS Binding
+          Write-Output "Assigning SSL Certificate to $websiteName..."
+          Set-ItemProperty -Path "IIS:\Sites\$websiteName\bindings" -Filter "protocol='https' -port='$httpsPort'" -Name "certStoreName" -Value $certStoreLocation
+          Set-ItemProperty -Path "IIS:\Sites\$websiteName\bindings" -Filter "protocol='https' -port='$httpsPort'" -Name "certThumbprint" -Value $certificateThumbprint
+          Write-Output "SSL Certificate assigned successfully."
           
           # Restart IIS site
           Start-Website -Name $websiteName
