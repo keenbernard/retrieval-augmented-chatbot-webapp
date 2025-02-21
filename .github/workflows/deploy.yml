@@ -156,19 +156,20 @@ jobs:
             $cmd = "netsh http add sslcert ipport=172.21.56.34:$httpsPort certhash=$certificateThumbprint appid='{4dc3e181-e14b-4a21-b022-59fc669b0914}' certstorename=My verifyclientcertrevocation=enable verifyrevocationwithcachedclientcertonly=disable"
             Invoke-Expression $cmd
             Write-Output "SSL Certificate assigned successfully."
+          }
           
+          # Get the existing site binding
+          $binding = Get-WebBinding -Name $websiteName -Protocol https -Port $httpsPort -ErrorAction SilentlyContinue
           
-            # Get the existing site binding
-            $binding = Get-WebBinding -Name $websiteName -Protocol https -Port $httpsPort -ErrorAction SilentlyContinue
-            
             if (-not $binding) {
             Write-Output "Adding HTTPS binding to IIS..."
             New-WebBinding -Name $websiteName -Protocol https -Port $httpsPort -IPAddress "*" -CertificateThumbprint $certificateThumbprint -CertStoreLocation $certStoreLocation
           } else {
             Write-Output "HTTPS binding already exists in IIS."
           }
-
-
+            
+            Write-Output "SSL Certificate correctly assigned in IIS!"
+          
           # Restart IIS site
           Start-Website -Name $websiteName
           Write-Output "Deployment complete!"
