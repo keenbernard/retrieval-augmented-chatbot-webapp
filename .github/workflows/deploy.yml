@@ -110,7 +110,7 @@ jobs:
           $iisPath = "IIS:\Sites\$websiteName"
           $buildPath = "C:\middleware\MID_AI\build"
           $certificateThumbprint = "5A89675513DE81A903ABA94A904F48F3941F661C"
-          $certStoreLocation = "Cert:\LocalMachine\My"
+          $certStoreLocation = "My"
           $httpPort = 3449
           $httpsPort = 3448
 
@@ -131,17 +131,22 @@ jobs:
               New-Website -Name $websiteName -PhysicalPath $buildPath -Port $httpPort
           }
           
-          # Ensure HTTP Binding Exists
-          $httpBinding = Get-WebBinding -Name $websiteName -Protocol "http" -Port $httpPort -ErrorAction SilentlyContinue
-          if (-not $httpBinding) {
-          Write-Output "Adding HTTP binding on port $httpPort..."
-          New-WebBinding -Name $websiteName -IPAddress "*" -Port $httpPort -Protocol http
+          # Ensure HTTPS binding is added
+          if (-not (Get-WebBinding -Name $websiteName -Protocol "https" -ErrorAction SilentlyContinue)) {
+            Write-Output "Adding HTTPS binding on port $httpsPort..."
+            New-WebBinding -Name $websiteName -IPAddress "*" -Port $httpsPort -Protocol https
+          } else {
+              Write-Output "HTTPS binding already exists."
           }
           
-          # Ensure HTTPS binding exists
-          if (-not (Get-WebBinding -Name $websiteName -Protocol "https" -ErrorAction SilentlyContinue)) {
-          Write-Output "Adding HTTPS binding on port $httpsPort..."
-          New-WebBinding -Name $websiteName -IPAddress "*" -Port $httpsPort -Protocol https
+          # Assign SSL Certificate to HTTPS binding
+          Write-Output "Assigning SSL Certificate to $websiteName..."
+          $binding = Get-WebBinding -Name $websiteName -Port $httpsPort -Protocol "https"
+          if ($binding) {
+              $binding.AddSslCertificate($certificateThumbprint, $certStoreLocation)
+              Write-Output "SSL Certificate assigned successfully."
+          } else {
+              Write-Output "Failed to assign SSL certificate: Binding not found."
           }
           
           # Restart IIS site
