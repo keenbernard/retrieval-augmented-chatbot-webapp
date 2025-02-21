@@ -109,7 +109,7 @@ jobs:
           $websiteName = "mid_ai-bot"
           $iisPath = "IIS:\Sites\$websiteName"
           $buildPath = "C:\middleware\MID_AI\build"
-          $certificateThumbprint = "2AE91B0CB896C78407180696E28A46307E1048B0"
+          $certificateThumbprint = "5A89675513DE81A903ABA94A904F48F3941F661C"
           $certStoreLocation = "Cert:\LocalMachine\My"
           $httpPort = 3449
           $httpsPort = 3448
@@ -153,11 +153,22 @@ jobs:
             Write-Output "SSL Certificate already assigned to port $httpsPort."
           } else {
             Write-Output "Assigning SSL Certificate to $websiteName..."
-            $cmd = "netsh http add sslcert ipport=172.21.56.34:$httpsPort certhash=$certificateThumbprint appid='{4dc3e181-e14b-4a21-b022-59fc669b0914}'"
+            $cmd = "netsh http add sslcert ipport=172.21.56.34:$httpsPort certhash=$certificateThumbprint appid='{4dc3e181-e14b-4a21-b022-59fc669b0914}' certstorename=My verifyclientcertrevocation=enable verifyrevocationwithcachedclientcertonly=disable"
             Invoke-Expression $cmd
             Write-Output "SSL Certificate assigned successfully."
-          }
           
-          # Restart IIS site
+          
+            # Get the existing site binding
+            $binding = Get-WebBinding -Name $websiteName -Protocol https -Port $httpsPort -ErrorAction SilentlyContinue
+            
+            if (-not $binding) {
+            Write-Output "Adding HTTPS binding to IIS..."
+            New-WebBinding -Name $websiteName -Protocol https -Port $httpsPort -IPAddress "*" -CertificateThumbprint $certificateThumbprint -CertStoreLocation $certStoreLocation
+          } else {
+            Write-Output "HTTPS binding already exists in IIS."
+          }
+
+
+# Restart IIS site
           Start-Website -Name $websiteName
           Write-Output "Deployment complete!"
