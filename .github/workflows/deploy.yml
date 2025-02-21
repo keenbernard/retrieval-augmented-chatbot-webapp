@@ -158,14 +158,20 @@ jobs:
             Write-Output "SSL Certificate assigned successfully."
           }
           
-          # Get the existing site binding
-          $binding = Get-WebBinding -Name $websiteName -Protocol https -Port $httpsPort -ErrorAction SilentlyContinue
-          
-          # Assign SSL Certificate to IIS HTTPS Binding
-          Write-Output "Assigning SSL Certificate to $websiteName..."
-          Set-ItemProperty -Path "IIS:\Sites\$websiteName\bindings" -Filter "protocol='https' -port='$httpsPort'" -Name "certStoreName" -Value $certStoreLocation
-          Set-ItemProperty -Path "IIS:\Sites\$websiteName\bindings" -Filter "protocol='https' -port='$httpsPort'" -Name "certThumbprint" -Value $certificateThumbprint
-          Write-Output "SSL Certificate assigned successfully."
+            # Assign SSL Certificate to IIS HTTPS Binding
+              Write-Output "Assigning SSL Certificate to $websiteName..."
+              $siteBindings = Get-Item "IIS:\Sites\$websiteName" | Select-Object -ExpandProperty bindings
+              $httpsBinding = $siteBindings.Collection | Where-Object { $_.bindingInformation -like "*:$httpsPort:*" -and $_.protocol -eq "https" }
+              
+              if ($httpsBinding) {
+              $httpsBinding.CertificateStoreName = $certStoreLocation
+              $httpsBinding.CertificateHash = $certificateThumbprint
+              Set-Item "IIS:\Sites\$websiteName"
+              Write-Output "SSL Certificate assigned successfully."
+            } else {
+            Write-Output "ERROR: Unable to locate HTTPS binding for $websiteName on port $httpsPort."
+            }
+
           
           # Restart IIS site
           Start-Website -Name $websiteName
