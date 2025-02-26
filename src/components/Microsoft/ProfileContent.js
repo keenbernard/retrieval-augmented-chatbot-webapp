@@ -18,7 +18,10 @@ const ProfileContent = () => {
         account: accounts[0]
       };
       instance.acquireTokenSilent(request).then((response) => {
-        callMsGraph(response.accessToken).then(response => setGraphData(response));
+        callMsGraph(response.accessToken).then(response => {
+          setGraphData(response)
+          localStorage.setItem('userRole', response.department === 'Legal' ? 'Legal' : 'General')
+        });
         const token = response.accessToken;
         setUserToken(token);
         // Schedule token renewal
@@ -31,7 +34,10 @@ const ProfileContent = () => {
       }).catch((e) => {
         console.log(e);
         instance.acquireTokenSilent(request).then((response) => {
-          callMsGraph(response.accessToken).then(response => setGraphData(response));
+          callMsGraph(response.accessToken).then(response => {
+            setGraphData(response);
+            localStorage.setItem('userRole', response.department === 'Legal' ? 'Legal' : 'General')
+          });
           const token = response.accessToken;
           setUserToken(token);
           // Schedule token renewal

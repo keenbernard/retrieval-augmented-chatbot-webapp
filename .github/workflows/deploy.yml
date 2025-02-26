@@ -127,7 +127,7 @@ jobs:
               Write-Output "Website $websiteName exists. Updating..."
               Stop-Website -Name $websiteName
           } else {
-              Write-Output "Creating new website $websiteName..."
+              Write-Output "Creating new website $websiteName... on port $httpPort"
               New-Website -Name $websiteName -PhysicalPath $buildPath -Port $httpPort
           }
           

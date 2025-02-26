@@ -7,8 +7,6 @@ const MyPhoto = () => {
   const [image, setImage] = useState();
   const { userToken, fetchUserImageHeader } = useProfileData();
 
-  console.log(userToken)
-
   const getProfilePhoto = async () => {
     try {
       const response = await fetch("https://graph.microsoft.com/v1.0/me/photo/$value", fetchUserImageHeader);

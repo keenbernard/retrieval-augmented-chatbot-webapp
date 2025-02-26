@@ -15,8 +15,7 @@ const App = () => {
   const [activeChatId, setActiveChatId] = useState(null); // Currently active chat ID
   const [loading, setLoading] = useState(false);
   const chatHistory = useRef(null);
-  const {serverConnection} = useProfileData();
-
+  const {serverConnection, userRole} = useProfileData();
 
   const createNewChat = async (isInitial = false) => {
     const newChat = {
@@ -41,7 +40,7 @@ const App = () => {
       });
 
       const initialize_response = await response.json();
-      console.log('Initialize Response:', initialize_response.message);
+      // console.log('Initialize Response:', initialize_response.message);
 
       // Mark the chat as initialized
       setChats((prevChats) =>
@@ -76,7 +75,7 @@ const App = () => {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ query: question }),
+        body: JSON.stringify({ query: question, role: userRole }),
       });
 
       const query_answer = await response.json();
