@@ -83,7 +83,7 @@ body {
 
 /* Question bubble (right-aligned) */
 .chat-question {
-  background-color: #61dafb;
+  background-color: #FFFFFF;
   color: black;
   align-self: flex-end;
   text-align: left;
@@ -129,11 +129,17 @@ body {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  background-color: #61dafb;
+  background-color: #FFFFFF;
   color: black;
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
+}
+
+.chat-submit:hover {
+  transition-duration: .15s;
+  background-color: #555;
+  transition-timing-function: cubic-bezier(.4,0,.2,1);
 }
 
 .chat-submit:disabled {

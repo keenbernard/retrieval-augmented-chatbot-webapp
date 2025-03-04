@@ -6,8 +6,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import Sidebar from './components/Sidebar/Sidebar';
 import ProfileContent from "./components/Microsoft/ProfileContent";
 import SignOutButton from "./components/Microsoft/SignOutButton";
-import {useProfileData} from "./hooks/ProfileState";
-
+import {useProfileData} from "./hooks/ProfileState"
+import DOMPurify from "dompurify";
 
 const App = () => {
   useMsalAuthentication(InteractionType.Redirect);
@@ -68,6 +68,7 @@ const App = () => {
     );
 
     setLoading(true);
+
     try {
       const response = await fetch(`${serverConnection}/query`, {
         method: 'POST',
@@ -79,12 +80,16 @@ const App = () => {
       });
 
       const query_answer = await response.json();
+      const formattedAnswer = query_answer.answer
+          .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+          .replace(/\n/g, "<br>");
+      const safeAnswer = DOMPurify.sanitize(formattedAnswer);
 
       // Add the answer to the active chat's history
       setChats((prevChats) =>
           prevChats.map((chat) =>
               chat.id === activeChatId
-                  ? { ...chat, qaHistory: [...chat.qaHistory, { type: 'answer', text: query_answer.answer }] }
+                  ? { ...chat, qaHistory: [...chat.qaHistory, { type: 'answer', text: safeAnswer  }] }
                   : chat
           )
       );
@@ -150,8 +155,8 @@ const App = () => {
                             className={`chat-bubble ${
                                 item.type === 'question' ? 'chat-question' : 'chat-answer'
                             }`}
+                            dangerouslySetInnerHTML={{ __html: item.text }}
                         >
-                          {item.text}
                         </div>
                     ))}
                     {loading && <div className="chat-loading">Thinking...</div>}
@@ -162,11 +167,11 @@ const App = () => {
                         type="text"
                         name="query"
                         className="chat-input"
-                        placeholder="Ask a question..."
+                        placeholder="Try me! Ask anything on policies and labour laws"
                         disabled={loading}
                     />
                     <button type="submit" className="chat-submit" disabled={loading}>
-                      {loading ? 'Loading...' : 'Send'}
+                      {loading ? 'Thinking...' : 'Send'}
                     </button>
                   </form>
                 </>

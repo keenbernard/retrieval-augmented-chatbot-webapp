@@ -6,7 +6,7 @@ body {
 }
 
 .sidebar {
-    width: 20vw;
+    width: 19vw;
     height: 100vh;
     background-color: #1e1e1e;
     display: flex;
@@ -28,7 +28,7 @@ body {
 }
 
 .sidebar-header button {
-    background-color: #61dafb;
+    background-color: #FFFFFF;
     border: none;
     padding: 10px;
     color: black;

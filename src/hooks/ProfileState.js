@@ -10,7 +10,7 @@ export const useProfileData = () => {
 export const ProfileProvider = ({ children }) => {
     const [graphData, setGraphData] = useState(null);
     const [userToken, setUserToken] = useState('');
-    const [userRole, setUserRole] = useState(localStorage.getItem("userRole"))
+    const [userRole, setUserRole] = useState(localStorage.getItem("userRole"));
 
     const authorizationHeader = useMemo(() => {
         return `Bearer ${userToken}`;
