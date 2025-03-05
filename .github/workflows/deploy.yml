@@ -48,6 +48,16 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Update AuthConfig.js
+        shell: pwsh
+        run: |
+          (Get-Content -Path "./src/components/Microsoft/AuthConfig.js") -replace "auth: localConfig,", "auth: testConfig," | Set-Content -Path "./src/components/Microsoft/AuthConfig.js"
+
+      - name: Update AuthConfig.js
+        shell: pwsh
+        run: |
+          (Get-Content -Path "./src/hooks/ProfileState.js") -replace "const serverConnection = localHost;", "const serverConnection = testHost;" | Set-Content -Path "./src/hooks/profileState.js"
+
       - name: Build Project
         run: |
           export CI=false
