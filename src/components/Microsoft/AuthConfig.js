@@ -19,7 +19,7 @@ const testConfig = {
 
 export const msalConfig = {
     //Redirect Configuration
-    auth: localConfig,
+    auth: testConfig,
     cache: {
         cacheLocation: 'sessionStorage',
         storeAuthStateInCookie: true,
