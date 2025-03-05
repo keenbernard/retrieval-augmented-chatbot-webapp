@@ -56,7 +56,7 @@ jobs:
           if ($envType -eq "midprod_frontend") {
             (Get-Content -Path "./src/components/Microsoft/AuthConfig.js") -replace "auth: localConfig,", "auth: prodConfig," | Set-Content -Path "./src/components/Microsoft/AuthConfig.js"
           } elseif ($envType -eq "midtest_frontend") {
-            (Get-Content -Path "./src/components/Microsoft/AuthConfig.js") -replace "auth: localConfig,", "auth: testConfig," | Set-Content -Path "./src/components/Microsoft/AuthConfig.js"
+            (Get-Content -Path "./src/components/Microsoft/AuthConfig.js") -replace "auth: localConfig,", "auth: localConfig," | Set-Content -Path "./src/components/Microsoft/AuthConfig.js"
           }
 
       - name: Update ProfileState.js
@@ -67,7 +67,7 @@ jobs:
           if ($envType -eq "midprod_frontend") {
             (Get-Content -Path "./src/hooks/ProfileState.js") -replace "const serverConnection = localHost;", "const serverConnection = prodHost;" | Set-Content -Path "./src/hooks/profileState.js"
           } elseif ($envType -eq "midtest_frontend") {
-            (Get-Content -Path "./src/hooks/ProfileState.js") -replace "const serverConnection = localHost;", "const serverConnection = testHost;" | Set-Content -Path "./src/hooks/profileState.js"
+            (Get-Content -Path "./src/hooks/ProfileState.js") -replace "const serverConnection = localHost;", "const serverConnection = localHost;" | Set-Content -Path "./src/hooks/profileState.js"
           }
 
       - name: Build Project
