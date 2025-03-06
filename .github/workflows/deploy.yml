@@ -73,11 +73,7 @@ jobs:
       - name: Modify server.js for HTTPS
         shell: pwsh
         run: |
-          (Get-Content -Path "./server/server.js") `
-            -replace '^(.*app\.listen\(PORT,.*)', '// $1' `  # Comment out HTTP server
-            -replace '^//(.*https\.createServer\(certificates\.middlewareTest, app\);)', '$1' `  # Uncomment HTTPS createServer
-            -replace '^//(.*httpsServer\.listen\(PORT\);)', '$1' `  # Uncomment HTTPS listen
-            | Set-Content -Path "./server/server.js"
+          (Get-Content -Path "./server/server.js") -replace "const PORT = process.env.PORT || portConfiguration.testPort;", "const PORT = process.env.PORT || portConfiguration.prodPort;" | Set-Content -Path "./server/server.js"
 
       - name: Build Project
         run: |
