@@ -72,6 +72,18 @@ jobs:
             Write-Output "ProfileState.js found. Updating with test host."
           }
 
+      - name: Update server.js
+        shell: pwsh
+        run: |
+          $envType = "${{ github.event.inputs.environment }}"
+          
+          if ($envType -eq "midprod_frontend") {
+            (Get-Content -Path "./server/server.js") -replace "const PORT = process.env.PORT || portConfiguration.localPort;", "const PORT = process.env.PORT || portConfiguration.prodPort;" | Set-Content -Path "./server/server.js"
+          } elseif ($envType -eq "midtest_frontend") {
+            (Get-Content -Path "./server/server.js") -replace "const PORT = process.env.PORT || portConfiguration.localPort;", "const PORT = process.env.PORT || portConfiguration.testPort;" | Set-Content -Path "./server/server.js"
+            Write-Output "server.js found. Updating with test port."
+          }
+
       - name: Build Project
         run: |
           export CI=false
