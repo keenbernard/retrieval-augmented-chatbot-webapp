@@ -70,11 +70,6 @@ jobs:
             (Get-Content -Path "./src/hooks/ProfileState.js") -replace "const serverConnection = localHost;", "const serverConnection = testHost;" | Set-Content -Path "./src/hooks/profileState.js"
           }
 
-      - name: Modify server.js for HTTPS
-        shell: pwsh
-        run: |
-          (Get-Content -Path "./server/server.js") -replace "const PORT = process.env.PORT || portConfiguration.localPort;", "const PORT = process.env.PORT || portConfiguration.testPort;" | Set-Content -Path "./server/server.js"
-
       - name: Build Project
         run: |
           export CI=false
