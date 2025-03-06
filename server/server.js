@@ -13,7 +13,7 @@ const path = require('path');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || portConfiguration.localPort;
+const PORT = process.env.PORT || portConfiguration.testPort;
 
 // Middleware
 app.use(cors());
