@@ -70,6 +70,15 @@ jobs:
             (Get-Content -Path "./src/hooks/ProfileState.js") -replace "const serverConnection = localHost;", "const serverConnection = testHost;" | Set-Content -Path "./src/hooks/profileState.js"
           }
 
+      - name: Modify server.js for HTTPS
+        shell: pwsh
+        run: |
+          (Get-Content -Path "./server/server.js") `
+            -replace '^(.*app\.listen\(PORT,.*)', '// $1' `  # Comment out HTTP server
+            -replace '^//(.*https\.createServer\(certificates\.middlewareTest, app\);)', '$1' `  # Uncomment HTTPS createServer
+            -replace '^//(.*httpsServer\.listen\(PORT\);)', '$1' `  # Uncomment HTTPS listen
+            | Set-Content -Path "./server/server.js"
+
       - name: Build Project
         run: |
           export CI=false
@@ -80,7 +89,7 @@ jobs:
         with:
           name: ragbot-build
           path: |
-            ${{ github.workspace }}/build
+            ${{ github.workspace }}/build         
 
       - name: Create Server Artifact
         uses: actions/upload-artifact@v4
