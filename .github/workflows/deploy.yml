@@ -57,6 +57,7 @@ jobs:
             (Get-Content -Path "./src/components/Microsoft/AuthConfig.js") -replace "auth: localConfig,", "auth: prodConfig," | Set-Content -Path "./src/components/Microsoft/AuthConfig.js"
           } elseif ($envType -eq "midtest_frontend") {
             (Get-Content -Path "./src/components/Microsoft/AuthConfig.js") -replace "auth: localConfig,", "auth: testConfig," | Set-Content -Path "./src/components/Microsoft/AuthConfig.js"
+            Write-Output "AuthConfig.js found. Updating with test configurations."
           }
 
       - name: Update ProfileState.js
@@ -68,6 +69,7 @@ jobs:
             (Get-Content -Path "./src/hooks/ProfileState.js") -replace "const serverConnection = localHost;", "const serverConnection = prodHost;" | Set-Content -Path "./src/hooks/profileState.js"
           } elseif ($envType -eq "midtest_frontend") {
             (Get-Content -Path "./src/hooks/ProfileState.js") -replace "const serverConnection = localHost;", "const serverConnection = testHost;" | Set-Content -Path "./src/hooks/profileState.js"
+            Write-Output "ProfileState.js found. Updating with test host."
           }
 
       - name: Build Project
