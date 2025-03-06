@@ -66,9 +66,9 @@ jobs:
           $envType = "${{ github.event.inputs.environment }}"
           
           if ($envType -eq "midprod_frontend") {
-            (Get-Content -Path "./src/hooks/ProfileState.js") -replace "const serverConnection = localHost;", "const serverConnection = prodHost;" | Set-Content -Path "./src/hooks/profileState.js"
+            (Get-Content -Path "./src/hooks/ProfileState.js") -replace "const serverConnection = localHost;", "const serverConnection = prodHost;" | Set-Content -Path "./src/hooks/ProfileState.js"
           } elseif ($envType -eq "midtest_frontend") {
-            (Get-Content -Path "./src/hooks/ProfileState.js") -replace "const serverConnection = localHost;", "const serverConnection = testHost;" | Set-Content -Path "./src/hooks/profileState.js"
+            (Get-Content -Path "./src/hooks/ProfileState.js") -replace "const serverConnection = localHost;", "const serverConnection = testHost;" | Set-Content -Path "./src/hooks/ProfileState.js"
             Write-Output "ProfileState.js found. Updating with test host."
           }
 
