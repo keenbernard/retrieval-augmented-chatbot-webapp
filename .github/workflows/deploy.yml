@@ -76,6 +76,7 @@ jobs:
         shell: pwsh
         run: |
           $envType = "${{ github.event.inputs.environment }}"
+          $filePath = "./server/server.js"
           
           if ($envType -eq "midprod_frontend") {
             (Get-Content -Path "./server/server.js") -replace "const PORT = process.env.PORT || portConfiguration.localPort;", "const PORT = process.env.PORT || portConfiguration.prodPort;" | Set-Content -Path "./server/server.js"
@@ -83,6 +84,17 @@ jobs:
             (Get-Content -Path "./server/server.js") -replace "const PORT = process.env.PORT || portConfiguration.localPort;", "const PORT = process.env.PORT || portConfiguration.testPort;" | Set-Content -Path "./server/server.js"
             Write-Output "server.js found. Updating with test port."
           }
+          
+          $content = Get-Content -Path $filePath -Raw
+          $content = $content -replace '(?m)^(app\.listen\(PORT.*)', '// $1'
+          $content = $content -replace '(?m)^//(\s*const certificates = {)', '$1'
+          $content = $content -replace '(?m)^//(\s*middlewareTest: {)', '$1'
+          $content = $content -replace '(?m)^//(\s*pfx: fs\.readFileSync.*)', '$1'
+          $content = $content -replace '(?m)^//(\s*passphrase:.*)', '$1'
+          $content = $content -replace '(?m)^//(\s*}};)', '$1'
+          $content = $content -replace '(?m)^//(\s*const httpsServer = https.createServer.*)', '$1'
+          $content = $content -replace '(?m)^//(\s*httpsServer.listen\(PORT\);)', '$1'
+          Set-Content -Path $filePath -Value $content
 
       - name: Build Project
         run: |
