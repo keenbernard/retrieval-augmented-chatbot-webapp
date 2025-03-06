@@ -30,6 +30,7 @@ const certificates = {
         pfx: fs.readFileSync(path.join(__dirname, 'certificates', 'wildcard_belizetelemedia_net-2024.pfx')),
         passphrase: '!D1giAcc355*'
     }}
+
 const httpsServer = https.createServer(certificates.middlewareTest, app);
 httpsServer.listen(PORT);
 
