@@ -28,7 +28,7 @@ export const ProfileProvider = ({ children }) => {
 
     const localHost = `http://localhost:${localPort}`;
     const testHost = `https://172.21.56.34:${testPort}`;
-    const serverConnection = localHost;
+    const serverConnection = testHost;
 
     return (
         <ProfileState.Provider value={{graphData, setGraphData, userToken, setUserToken, setUserRole, fetchUserDataHeader, fetchUserImageHeader, serverConnection, userRole }}>
