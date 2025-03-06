@@ -52,9 +52,11 @@ jobs:
         shell: pwsh
         run: |
           $envType = "${{ github.event.inputs.environment }}"
+          $filePath = "./src/components/Microsoft/AuthConfig.js"
           
           if ($envType -eq "midprod_frontend") {
             (Get-Content -Path "./src/components/Microsoft/AuthConfig.js") -replace "auth: localConfig,", "auth: prodConfig," | Set-Content -Path "./src/components/Microsoft/AuthConfig.js"
+            Write-Output "AuthConfig.js found. Updating with production configurations."
           } elseif ($envType -eq "midtest_frontend") {
             (Get-Content -Path "./src/components/Microsoft/AuthConfig.js") -replace "auth: localConfig,", "auth: testConfig," | Set-Content -Path "./src/components/Microsoft/AuthConfig.js"
             Write-Output "AuthConfig.js found. Updating with test configurations."
@@ -64,11 +66,13 @@ jobs:
         shell: pwsh
         run: |      
           $envType = "${{ github.event.inputs.environment }}"
+          $filePath = "./src/hooks/ProfileState.js"
           
           if ($envType -eq "midprod_frontend") {
-            (Get-Content -Path "./src/hooks/ProfileState.js") -replace "const serverConnection = localHost;", "const serverConnection = prodHost;" | Set-Content -Path "./src/hooks/ProfileState.js"
+            (Get-Content -Path $filePath) -replace "const serverConnection = localHost;", "const serverConnection = prodHost;" | Set-Content -Path $filePath
+            Write-Output "ProfileState.js found. Updating with production host"
           } elseif ($envType -eq "midtest_frontend") {
-            (Get-Content -Path "./src/hooks/ProfileState.js") -replace "const serverConnection = localHost;", "const serverConnection = testHost;" | Set-Content -Path "./src/hooks/ProfileState.js"
+            (Get-Content -Path $filePath) -replace "const serverConnection = localHost;", "const serverConnection = testHost;" | Set-Content -Path $filePath
             Write-Output "ProfileState.js found. Updating with test host"
           }
 
@@ -79,13 +83,14 @@ jobs:
           $filePath = "./server/server.js"
           
           if ($envType -eq "midprod_frontend") {
-            (Get-Content -Path "./server/server.js") -replace "const PORT = process.env.PORT || portConfiguration.localPort;", "const PORT = process.env.PORT || portConfiguration.prodPort;" | Set-Content -Path "./server/server.js"
+            (Get-Content -Path $filePath) -replace "const PORT = process.env.PORT || portConfiguration.localPort;", "const PORT = process.env.PORT || portConfiguration.prodPort;" | Set-Content -Path $filePath
+            Write-Output "server.js found. Updating with production port"
           } elseif ($envType -eq "midtest_frontend") {
-            (Get-Content -Path "./server/server.js") -replace "const PORT = process.env.PORT || portConfiguration.localPort;", "const PORT = process.env.PORT || portConfiguration.testPort;" | Set-Content -Path "./server/server.js"
+            (Get-Content -Path $filePath) -replace "const PORT = process.env.PORT || portConfiguration.localPort;", "const PORT = process.env.PORT || portConfiguration.testPort;" | Set-Content -Path $filePath
             Write-Output "server.js found. Updating with test port"
           }
           
-          Write-Output "Enabling use of HTTPS app service"
+          Write-Output "Enabling HTTPS app service"
           $content = Get-Content -Path $filePath -Raw
           $content = $content -replace '(?m)^(app\.listen\(PORT.*)', '// $1'
           $content = $content -replace '(?m)^//(\s*const certificates = {)', '$1'
@@ -96,7 +101,7 @@ jobs:
           $content = $content -replace '(?m)^//(\s*const httpsServer = https.createServer.*)', '$1'
           $content = $content -replace '(?m)^//(\s*httpsServer.listen\(PORT\);)', '$1'
           Set-Content -Path $filePath -Value $content
-          Write-Output "HTTPS Enabled"
+          Write-Output "HTTPS app service enabled"
 
       - name: Build Project
         run: |
@@ -158,6 +163,8 @@ jobs:
           $websiteName = "mid_ai-bot"
           $iisPath = "IIS:\Sites\$websiteName"
           $buildPath = "C:\middleware\MID_AI\build"
+          $srcPath = "C:\middleware\MID_AI\src"
+          $serverPath = "C:\middleware\MID_AI\server"
           $certificateThumbprint = "5A89675513DE81A903ABA94A904F48F3941F661C"
           $certStoreLocation = "My"
           $httpPort = 3449
@@ -165,8 +172,8 @@ jobs:
 
           # Ensure the directories exist
           New-Item -ItemType Directory -Path $buildPath -Force | Out-Null
-          New-Item -ItemType Directory -Path "C:\middleware\MID_AI\src" -Force | Out-Null
-          New-Item -ItemType Directory -Path "C:\middleware\MID_AI\server" -Force | Out-Null
+          New-Item -ItemType Directory -Path $srcPath -Force | Out-Null
+          New-Item -ItemType Directory -Path $serverPath -Force | Out-Null
           
           # Import IIS Module
           Import-Module WebAdministration
