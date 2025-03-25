@@ -83,10 +83,10 @@ jobs:
           $filePath = "./server/server.js"
           
           if ($envType -eq "midprod_frontend") {
-            (Get-Content -Path $filePath) -replace "const PORT = process.env.PORT || portConfiguration.localPort;", "const PORT = process.env.PORT || portConfiguration.prodPort;" | Set-Content -Path $filePath
+            (Get-Content -Path $filePath) -replace "portConfiguration.localPort;", "portConfiguration.prodPort;" | Set-Content -Path $filePath
             Write-Output "server.js found. Updating with production port"
           } elseif ($envType -eq "midtest_frontend") {
-            (Get-Content -Path $filePath) -replace "const PORT = process.env.PORT || portConfiguration.localPort;", "const PORT = process.env.PORT || portConfiguration.testPort;" | Set-Content -Path $filePath
+            (Get-Content -Path $filePath) -replace "portConfiguration.localPort;", "portConfiguration.testPort;" | Set-Content -Path $filePath
             Write-Output "server.js found. Updating with test port"
           }
           
