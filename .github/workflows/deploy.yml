@@ -252,10 +252,7 @@ jobs:
             & $nssmPath set $serviceName AppDirectory $appDir
             & $nssmPath set $serviceName Start SERVICE_AUTO_START
             & $nssmPath start $serviceName
-            & $nssmPath set $serviceName Description "Node.js service for HR Rewards backend"
-            & $nssmPath set UT2003 AppThrottle 1500
-            & $nssmPath set UT2003 AppExit Default Restart
-            & $nssmPath set UT2003 AppRestartDelay 0
+            & $nssmPath set $serviceName Description "Node.js service for MID AI BOT backend"
 
             Write-Output "NodeJS Service created and started."
           }
