@@ -225,7 +225,8 @@ jobs:
 
   post_config:
     needs: deploy
-    runs-on: ${{ inputs.environment == 'Production' && 'prod-front1' || 'test-frontend' }}
+    runs-on: ${{ inputs.environment == 'midprod_frontend' && 'self-hosted' ||
+      inputs.environment == 'midtest_frontend' && 'self-hosted' }}
     steps:
       - name: Create or Restart Node Service
         shell: powershell
