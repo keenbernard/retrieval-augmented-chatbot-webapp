@@ -253,9 +253,9 @@ jobs:
             & $nssmPath set $serviceName Start SERVICE_AUTO_START
             & $nssmPath start $serviceName
             & $nssmPath set $serviceName Description "Node.js service for HR Rewards backend"
-            & nssm set UT2003 AppThrottle 1500
-            & nssm set UT2003 AppExit Default Restart
-            & nssm set UT2003 AppRestartDelay 0
+            & $nssmPath set UT2003 AppThrottle 1500
+            & $nssmPath set UT2003 AppExit Default Restart
+            & $nssmPath set UT2003 AppRestartDelay 0
 
             Write-Output "NodeJS Service created and started."
           }
