@@ -134,6 +134,20 @@ jobs:
     runs-on: ${{ inputs.environment == 'midprod_frontend' && 'self-hosted' ||
       inputs.environment == 'midtest_frontend' && 'self-hosted' }}
     steps:
+      - name: Stop Node.js Service Before Server Update
+        shell: powershell
+        run: |
+          $serviceName = "MID_AI_BOT_NODE_SERVICE"
+          $nssmPath = "C:\nssm-2.24\nssm-2.24\win64\nssm.exe"
+          $serviceExists = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
+          
+          if ($serviceExists) {
+          Write-Output "Stopping service $serviceName before updating server files..."
+          & $nssmPath stop $serviceName
+          Start-Sleep -Seconds 3
+          Write-Output "Service $serviceName stopped."
+          }
+
       - name: Download frontend build
         uses: actions/download-artifact@v4
         with:
@@ -208,3 +222,39 @@ jobs:
           # Restart IIS site
           Start-Website -Name $websiteName
           Write-Output "Deployment complete!"
+
+  post_config:
+    needs: deploy
+    runs-on: ${{ inputs.environment == 'Production' && 'prod-front1' || 'test-frontend' }}
+    steps:
+      - name: Create or Restart Node Service
+        shell: powershell
+        run: |
+          $serviceName = "MID_AI_BOT_NODE_SERVICE"
+          $nssmPath = "C:\nssm-2.24\nssm-2.24\win64\nssm.exe"
+          $appDir = "C:\middleware\MID_AI\server"
+          $nodePath = "C:\Program Files\nodejs\node.exe"
+          $scriptPath = "$appDir\index.js"
+
+          # Check if service exists
+          $serviceExists = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
+
+          if ($serviceExists) {
+          Write-Output "Service $serviceName already exists. Restarting..."
+          & $nssmPath stop $serviceName
+          Start-Sleep -Seconds 3
+          & $nssmPath start $serviceName
+          Write-Output "Service restarted."
+          } else {
+            Write-Output "Service $serviceName does not exist. Creating it..."
+            & $nssmPath install $serviceName $nodePath $scriptPath
+            & $nssmPath set $serviceName AppDirectory $appDir
+            & $nssmPath set $serviceName Start SERVICE_AUTO_START
+            & $nssmPath start $serviceName
+            & $nssmPath set $serviceName Description "Node.js service for HR Rewards backend"
+            & nssm set UT2003 AppThrottle 1500
+            & nssm set UT2003 AppExit Default Restart
+            & nssm set UT2003 AppRestartDelay 0
+
+            Write-Output "NodeJS Service created and started."
+          }
